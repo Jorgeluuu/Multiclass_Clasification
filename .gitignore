@@ -1,3 +1,9 @@
+# Extras
+.python-version
+main.py
+pyproject.toml
+uv.lock
+checking_data.ipynb
 #Datos,
 
 data/
