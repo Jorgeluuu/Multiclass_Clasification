@@ -106,7 +106,7 @@ const Navbar = () => {
                     to={item.path}
                     className={`text-white transition-all duration-200 px-3 py-2 text-lg font-medium hover:scale-105 relative ${
                       location.pathname === item.path 
-                        ? 'scale-105 after:absolute after:top-12 after:left-0 after:right-0 after:h-4 after:bg-white' 
+                        ? 'scale-105 after:absolute after:top-12 after:left-0 after:right-0 after:h-[5px] after:bg-white' 
                         : ''
                     }`}
                     style={{ fontWeight: location.pathname === item.path ? '600' : '500' }}
