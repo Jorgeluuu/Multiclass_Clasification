@@ -1,25 +1,16 @@
 // routes/predict.js
 const express = require('express');
-const { spawn } = require('child_process');
 const router = express.Router();
+const { predict } = require('../controllers/predictController');
 
-router.post('/', (req, res) => {
-  const inputData = req.body;
+// Ruta POST para hacer predicciones
+router.post('/', predict);
 
-  const python = spawn('python', ['model/predict.py', JSON.stringify(inputData)]);
-
-  let result = '';
-  python.stdout.on('data', (data) => {
-    result += data.toString();
-  });
-
-  python.stderr.on('data', (data) => {
-    console.error(`Error en Python: ${data}`);
-  });
-
-  python.on('close', () => {
-    res.json({ prediction: result.trim() });
-  });
+// (Opcional) Ruta GET por ID para pruebas o futura lógica
+router.get('/:id', (req, res) => {
+  const studentId = req.params.id;
+  // Lógica de prueba por ahora
+  res.json({ message: `Datos del estudiante con ID: ${studentId}` });
 });
 
 module.exports = router;
