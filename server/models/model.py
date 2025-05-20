@@ -26,10 +26,10 @@ df = pd.DataFrame(data)
 X = df.drop('target', axis=1)
 y = df['target']
 
-# Entrenar modelo
+# Training a Random Forest Classifier
 model = RandomForestClassifier()
 model.fit(X, y)
 
-# Guardar el modelo
+# Save model
 joblib.dump(model, 'server/models/model.pkl')
 print("✅ Modelo de prueba guardado como model.pkl")
