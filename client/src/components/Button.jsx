@@ -8,7 +8,7 @@ const Button = ({
   className = ''
 }) => {
   // Estilos base compartidos
-  const baseStyles = "px-6 py-3 font-semibold text-base transition-colors duration-200 focus:outline-none";
+  const baseStyles = "px-6 py-3 font-semibold text-base transition-colors duration-200 focus:outline-none font-madrid";
   
   // Estilos específicos para cada variante
   const variantStyles = {
