@@ -1,5 +1,5 @@
 import React from 'react';
-import studentMentoringImage from '../assets/images/student-monotoring.jpg';
+import studentMentoringImage from '../assets/images/student-monitoring.jpg';
 
 const Monitoring = () => {
   return (
@@ -21,11 +21,11 @@ const Monitoring = () => {
             <div className="flex flex-col items-start">
               <div className="flex items-center">
                 <div className="flex-shrink-0 w-2 h-12 mr-4 bg-red-600"></div>
-                <h1 className="text-4xl font-bold text-white md:text-5xl">
-                  Seguimiento estudiantes
+                <h1 className="text-5xl font-bold text-white">
+                  Seguimiento
                 </h1>
               </div>
-              <p className="self-start mt-4 text-lg text-left text-white md:text-xl" style={{marginLeft: '0px'}}>
+              <p className="self-start mt-4 text-xl text-left text-white" style={{marginLeft: '0px'}}>
                 Panel de control para monitorizar el progreso y rendimiento académico de los estudiantes
               </p>
             </div>

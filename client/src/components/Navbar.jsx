@@ -43,7 +43,7 @@ const Navbar = () => {
       path: '/'
     },
     {
-      name: 'Seguimiento estudiantes',
+      name: 'Seguimiento',
       path: '/monitoring'
     }
   ];
