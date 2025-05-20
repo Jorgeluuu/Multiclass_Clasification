@@ -39,12 +39,12 @@ const Navbar = () => {
 
   const navItems = [
     {
-      name: 'Inicio',
+      name: 'Predicción',
       path: '/'
     },
     {
-      name: 'Predicción',
-      path: '/prediction'
+      name: 'Seguimiento estudiantes',
+      path: '/monitoring'
     }
   ];
 
