@@ -1,3 +1,7 @@
+# Extras
+.python-version
+uv.lock
+
 #Datos,
 
 data/
