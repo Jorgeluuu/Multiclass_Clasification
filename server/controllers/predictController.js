@@ -4,9 +4,11 @@ const supabase = require('../database/connection_db_supabase');
 // -----------------------------------------------------------------------------------------
 const predict = (req, res) => {
   const inputData = req.body;
-  const pythonPath = process.env.PYTHON_PATH || 'python';
+  const pythonPath = 'C:\\Users\\yaelp\\anaconda3\\python.exe';  // NUEVO INTENTO
+  // const pythonPath = 'python3'; //NO FUNCIONA
+  // const pythonPath = process.env.PYTHON_PATH || 'python'; // LO DEBERÍA DE TRAER DEL .ENV PERO ESTÁ DANTO ERROR
 
-  const python = spawn(pythonPath, ['model/predict.py', JSON.stringify(inputData)]);
+  const python = spawn(pythonPath, ['server/models/predict.py', JSON.stringify(inputData)]);
 
   let result = '';
 
@@ -24,7 +26,7 @@ const predict = (req, res) => {
     try {
       // Guardamos en Supabase
       const { error } = await supabase
-        .from('students')
+        .from('Fake') // ESTE ES EL NOMBRE DE LA TABLA FAKE EN SUPABASE QUE DEBERÁ DE SER CAMBIADO POR EL CORRECTO
         .insert([
           {
             age: inputData.age,

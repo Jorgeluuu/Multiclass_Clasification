@@ -4,7 +4,7 @@ import joblib
 import pandas as pd
 # ---------------------------------------------------------------------------------------------------------------------
 # Cargar el modelo entrenado
-model = joblib.load('server/models/model.pkl')
+model = joblib.load('server/models/model.pkl') # CUIDADO CON ESTA RUTA, esto depende de donde se ejecute el script, en este caso es desde la carpeta server/models
 
 # Recibir datos del backend
 input_json = sys.argv[1]
