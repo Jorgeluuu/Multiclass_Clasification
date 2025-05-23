@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Literal
 from server.models.predictor import predict_student_outcome
-from .database.supabase_client import supabase  # Supabase client
+from .database.supabase_client import supabase
 from server.models.preprocessing import PreprocessingPipeline
 from server.models.schemas import StudentInput
 
@@ -74,23 +74,47 @@ async def root():
 @app.post("/predict", response_model=PredictionResponse)
 async def predict_student(input_data: StudentInput):
     try:
-        prediction = predict_student_outcome(input_data)
+        # ✅ USAR SOLO EL MODELO ML - Sin fallback
+        try:
+            from server.models.predictor import predict_student_outcome
+            prediction = predict_student_outcome(input_data.dict())
+            print(f"✅ Predicción del modelo ML: {prediction}")
+        except Exception as predictor_error:
+            print(f"❌ Error crítico en modelo ML: {predictor_error}")
+            # En lugar de fallback, devolver error específico
+            raise HTTPException(
+                status_code=500, 
+                detail=f"Error en el modelo de predicción: {str(predictor_error)}"
+            )
 
-        if isinstance(prediction, str) and "Error" in prediction:
-            raise HTTPException(status_code=500, detail=prediction)
+        # Validar resultado del modelo
+        valid_predictions = ["Graduate", "Dropout", "Enrolled"]
+        if prediction not in valid_predictions:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Predicción inválida del modelo: {prediction}"
+            )
 
-        # Prepara para guardar en Supabase
+        # Guardar en Supabase
         student_data = StudentData(**input_data.dict(), target=prediction)
-
-        # Cambia 'Fake' por el nombre real de tu tabla
         response = supabase.table("students").insert(student_data.model_dump()).execute()
 
         if response.data:
             print(f"✅ Datos guardados en Supabase: {response.data}")
-            return PredictionResponse(prediction=prediction, message="Predicción y datos guardados en Supabase ✅")
-        
+            return PredictionResponse(
+                prediction=prediction, 
+                message="Predicción realizada por modelo ML y datos guardados ✅"
+            )
         else:
-            print(f"⚠️ Error al guardar en Supabase: {response.status_code} - {response.count} - {response.data} - {response.status}")
+            print(f"⚠️ Error al guardar en Supabase")
+            return PredictionResponse(
+                prediction=prediction,
+                message="Predicción realizada por modelo ML pero error al guardar ⚠️"
+            )
+            
+    except HTTPException:
+        # Re-lanzar errores HTTP
+        raise
     except Exception as e:
         print(f"❌ Error inesperado en /predict: {e}")
         raise HTTPException(status_code=500, detail=f"Error interno del servidor: {e}")

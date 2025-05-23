@@ -23,8 +23,9 @@ class PreprocessingPipeline:
                 
                 for cat_feature in self.categorical_features:
                     if cat_feature.startswith(base_feature + '_'):
-                        feature_value = cat_feature.split('_', 1)[1]
+                        feature_value = cat_feature.replace(f"{base_feature}_", "", 1)
                         X_processed[cat_feature] = 1 if str(value) == feature_value else 0
+
                 
                 X_processed = X_processed.drop(base_feature, axis=1)
         

@@ -161,13 +161,6 @@ const Prediction = () => {
             <div id="results-section" className="p-6 mt-12 bg-white border border-gray-200">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-gray-800 font-madrid">Resultado de la Predicción</h2>
-                <Button
-                  variant="secondary"
-                  onClick={handleViewHistory}
-                  className="px-4 py-2 text-sm"
-                >
-                  Ver Historial
-                </Button>
               </div>
               
               {/* Predicción principal */}
@@ -224,15 +217,6 @@ const Prediction = () => {
                 </div>
               )}
               
-              {/* Mensaje adicional del backend */}
-              {predictionResult.message && (
-                <div className="p-4 mt-6 border border-green-200 bg-green-50">
-                  <p className="text-sm text-green-700 font-madrid">
-                    {predictionResult.message}
-                  </p>
-                </div>
-              )}
-              
               {/* Botones de acción */}
               <div className="flex flex-col items-center justify-center mt-8 space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
                 <Button 
@@ -249,20 +233,7 @@ const Prediction = () => {
                   Ver todas las predicciones
                 </Button>
               </div>
-              
-              {/* Información adicional */}
-              <div className="p-4 mt-6 border border-blue-200 bg-blue-50">
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-1 h-6 mr-3 bg-blue-600"></div>
-                  <div>
-                    <h4 className="text-sm font-semibold text-blue-800 font-madrid">Información sobre la predicción</h4>
-                    <p className="mt-1 text-sm text-blue-700 font-madrid">
-                      Esta predicción ha sido generada usando un modelo de aprendizaje automático entrenado con datos históricos. 
-                      Los resultados son probabilísticos y deben usarse como orientación en la toma de decisiones académicas.
-                    </p>
-                  </div>
-                </div>
-              </div>
+
             </div>
           )}
         </div>

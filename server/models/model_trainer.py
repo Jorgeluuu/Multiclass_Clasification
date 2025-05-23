@@ -10,7 +10,7 @@ import xgboost as xgb
 from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, confusion_matrix
 from sklearn.metrics import classification_report, roc_auc_score, roc_curve
-from preprocessing import PreprocessingPipeline
+from server.models.preprocessing import PreprocessingPipeline
 from collections import Counter
 
 
