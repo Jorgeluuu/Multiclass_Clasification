@@ -16,8 +16,8 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
     scholarship_holder: '',
     tuition_fees_up_to_date: '',
     previous_qualification: '',
-    mother_qualification: '',
-    father_qualification: ''
+    mothers_qualification: '',
+    fathers_qualification: ''
   });
   
   const [errors, setErrors] = useState({});
@@ -75,8 +75,8 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
       'scholarship_holder',
       'tuition_fees_up_to_date',
       'previous_qualification',
-      'mother_qualification',
-      'father_qualification'
+      'mothers_qualification',
+      'fathers_qualification'
     ];
     
     requiredFields.forEach(field => {
@@ -445,8 +445,8 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
               <div>
                 <label className={labelClasses}>Calificación de la madre *</label>
                 <select
-                  name="mother_qualification"
-                  value={formData.mother_qualification}
+                  name="mothers_qualification"
+                  value={formData.mothers_qualification}
                   onChange={handleChange}
                   className={`${inputBaseClasses} appearance-none bg-white cursor-pointer`}
                   style={{
@@ -473,16 +473,16 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
                   <option value="2nd cycle of the general high school course">2º ciclo del curso general de bachillerato</option>
                   <option value="Technological specialization course">Curso de especialización tecnológica</option>
                 </select>
-                {errors.mother_qualification && (
-                  <p className={errorClasses}>{errors.mother_qualification}</p>
+                {errors.mothers_qualification && (
+                  <p className={errorClasses}>{errors.mothers_qualification}</p>
                 )}
               </div>
               
               <div>
                 <label className={labelClasses}>Calificación del padre *</label>
                 <select
-                  name="father_qualification"
-                  value={formData.father_qualification}
+                  name="fathers_qualification"
+                  value={formData.fathers_qualification}
                   onChange={handleChange}
                   className={`${inputBaseClasses} appearance-none bg-white cursor-pointer`}
                   style={{
@@ -509,8 +509,8 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
                   <option value="2nd cycle of the general high school course">2º ciclo del curso general de bachillerato</option>
                   <option value="Technological specialization course">Curso de especialización tecnológica</option>
                 </select>
-                {errors.father_qualification && (
-                  <p className={errorClasses}>{errors.father_qualification}</p>
+                {errors.fathers_qualification && (
+                  <p className={errorClasses}>{errors.fathers_qualification}</p>
                 )}
               </div>
             </div>
