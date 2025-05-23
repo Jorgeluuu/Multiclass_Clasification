@@ -9,6 +9,12 @@ from server.models.schemas import StudentInput
 
 import os
 from dotenv import load_dotenv
+
+
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+# ---------------------------
 # Carga el .env
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
 
@@ -47,9 +53,11 @@ class StudentData(BaseModel):
 
 app = FastAPI(
     title="API de Predicción Estudiantil con XGBoost",
-    description="API para predecir rendimiento académico usando un modelo entrenado.",
+    description="API para predecir rendimiento académico usando un modelo entrenado."
 )
+#------------------------------
 
+# ----------    
 # CORS
 app.add_middleware(
     CORSMiddleware,
@@ -97,3 +105,20 @@ async def get_students():
             raise HTTPException(status_code=500, detail="❌ No se pudo obtener estudiantes.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"❌ Error: {e}")
+    
+      // GET request
+ useEffect(() => {axios.get('http://localhost:8000/api/data').then(response => {
+        setMessage(response.data.message);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+  }, []);
+# -----------------------------
+
+dist_path = os.path.join(os.path.dirname(__file__), '..', 'client', 'dist'),
+app.mount("/assets", StaticFiles(directory=os.path.join(dist_path, 'assets')), name="assets")
+
+@app.get("/")
+async def serve_frontend():
+    return FileResponse(os.path.join(dist_path, 'index.html'))
