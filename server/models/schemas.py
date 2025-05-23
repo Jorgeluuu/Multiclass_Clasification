@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class StudentInput(BaseModel):
     curricular_units_1st_sem_grade: float
@@ -14,5 +14,7 @@ class StudentInput(BaseModel):
     tuition_fees_up_to_date: str
     marital_status: str
     previous_qualification: str
-    mothers_qualification: str
-    fathers_qualification: str
+    
+    # ✅ SOLUCIÓN: Usar Field(alias=...) para aceptar nombres con apóstrofes
+    mothers_qualification: str = Field(alias="mother's_qualification")
+    fathers_qualification: str = Field(alias="father's_qualification")

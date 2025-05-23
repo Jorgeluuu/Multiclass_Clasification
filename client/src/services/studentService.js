@@ -28,9 +28,10 @@ const studentService = {
       tuition_fees_up_to_date: formData.tuition_fees_up_to_date,
       marital_status: formData.marital_status,
       previous_qualification: formData.previous_qualification,
-      // ✅ Mantener nombres sin apóstrofe para el backend
-      mothers_qualification: formData.mothers_qualification || formData["mother's_qualification"],
-      fathers_qualification: formData.fathers_qualification || formData["father's_qualification"]
+      
+      // ✅ SOLUCIÓN: Mapear a los nombres que espera el backend (CON apóstrofes)
+      "mother's_qualification": formData.mothers_qualification || formData["mother's_qualification"],
+      "father's_qualification": formData.fathers_qualification || formData["father's_qualification"]
     };
     
     console.log('✅ Datos convertidos para backend:', backendData);
@@ -264,9 +265,9 @@ const studentService = {
       scholarship_holder: predictionData.scholarship_holder || '',
       tuition_fees_up_to_date: predictionData.tuition_fees_up_to_date || '',
       previous_qualification: predictionData.previous_qualification || '',
-      // Mapear nombres del backend (sin apóstrofe) al formulario
-      mothers_qualification: predictionData.mothers_qualification || predictionData["mother's_qualification"] || '',
-      fathers_qualification: predictionData.fathers_qualification || predictionData["father's_qualification"] || ''
+      // ✅ MAPEAR nombres del backend (con apóstrofe) al formulario (sin apóstrofe)
+      mothers_qualification: predictionData["mother's_qualification"] || predictionData.mothers_qualification || '',
+      fathers_qualification: predictionData["father's_qualification"] || predictionData.fathers_qualification || ''
     };
     
     console.log('✅ Datos convertidos para formulario:', formData);
