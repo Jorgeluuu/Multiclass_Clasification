@@ -11,7 +11,9 @@ const studentService = {
    * @returns {Object} - Datos en formato del backend
    */
   convertToBackendFormat: (formData) => {
-    return {
+    console.log('🔄 Convirtiendo datos del formulario:', formData);
+    
+    const backendData = {
       // Nombres exactos que espera el backend según schemas.py
       curricular_units_1st_sem_grade: parseFloat(formData.curricular_units_1st_sem_grade),
       curricular_units_2nd_sem_grade: parseFloat(formData.curricular_units_2nd_sem_grade),
@@ -26,58 +28,113 @@ const studentService = {
       tuition_fees_up_to_date: formData.tuition_fees_up_to_date,
       marital_status: formData.marital_status,
       previous_qualification: formData.previous_qualification,
-      // Cambiar nombres con apóstrofe a sin apóstrofe para el backend
+      // ✅ Mantener nombres sin apóstrofe para el backend
       mothers_qualification: formData.mothers_qualification || formData["mother's_qualification"],
       fathers_qualification: formData.fathers_qualification || formData["father's_qualification"]
     };
+    
+    console.log('✅ Datos convertidos para backend:', backendData);
+    
+    // Verificar que no hay valores undefined o null
+    for (const [key, value] of Object.entries(backendData)) {
+      if (value === undefined || value === null || value === '') {
+        console.warn(`⚠️ Valor problemático para ${key}:`, value);
+      }
+    }
+    
+    return backendData;
   },
 
   /**
    * Realiza una predicción basada en los datos del estudiante
+   * ✅ SOLO USA EL MODELO - SIN RESPALDO NI SIMULACIONES
    * @param {Object} studentData - Datos del estudiante para la predicción
    * @returns {Promise} - Promesa que resuelve con el resultado de la predicción
    */
   predictOutcome: async (studentData) => {
     try {
+      console.log('📤 Enviando datos originales:', studentData);
+      
       // Convertir datos al formato del backend
       const backendData = studentService.convertToBackendFormat(studentData);
+      console.log('📤 Enviando datos convertidos al backend:', backendData);
       
       const response = await axios.post(`${API_URL}/predict`, backendData);
+      console.log('📥 Respuesta completa del backend:', response.data);
       
-      // El backend devuelve {prediction, message}
-      // Simulamos las probabilidades ya que el backend actual no las devuelve
+      // ✅ VALIDACIÓN ESTRICTA: Solo aceptar respuestas del modelo ML
+      if (!response.data.prediction) {
+        throw new Error('El backend no devolvió una predicción válida del modelo ML');
+      }
+      
       const prediction = response.data.prediction;
-      const probabilities = {
-        'Graduate': prediction === 'Graduate' ? 0.85 : 0.1,
-        'Dropout': prediction === 'Dropout' ? 0.80 : 0.1,
-        'Enrolled': prediction === 'Enrolled' ? 0.75 : 0.1
-      };
+      console.log('🎯 Predicción del modelo:', prediction);
       
-      // Normalizar probabilidades para que sumen 1
-      const total = Object.values(probabilities).reduce((sum, prob) => sum + prob, 0);
-      Object.keys(probabilities).forEach(key => {
-        probabilities[key] = probabilities[key] / total;
-      });
+      // ✅ VERIFICAR que la predicción es válida
+      const validPredictions = ['Graduate', 'Dropout', 'Enrolled'];
+      if (!validPredictions.includes(prediction)) {
+        throw new Error(`Predicción inválida del modelo: ${prediction}. Debe ser una de: ${validPredictions.join(', ')}`);
+      }
+      
+      // ✅ USAR PROBABILIDADES REALES DEL MODELO
+      let probabilities = null;
+      let confidence = null;
+      
+      if (response.data.probabilities) {
+        // Probabilidades reales del modelo XGBoost
+        probabilities = response.data.probabilities;
+        confidence = response.data.confidence;
+        console.log('📊 Probabilidades del modelo XGBoost:', probabilities);
+        console.log('🎯 Confianza del modelo:', confidence);
+        
+        // Verificar que las probabilidades son válidas
+        const probSum = Object.values(probabilities).reduce((sum, prob) => sum + prob, 0);
+        if (Math.abs(probSum - 1.0) > 0.01) {
+          console.warn(`⚠️ Las probabilidades no suman 1.0: ${probSum}`);
+        }
+        
+        // Verificar que la predicción coincide con la probabilidad máxima
+        const maxProbClass = Object.keys(probabilities).reduce((a, b) => 
+          probabilities[a] > probabilities[b] ? a : b
+        );
+        if (maxProbClass !== prediction) {
+          console.warn(`⚠️ Inconsistencia: predicción=${prediction}, max_prob_class=${maxProbClass}`);
+        }
+        
+      } else {
+        // Si no hay probabilidades, informar que faltan
+        console.warn('⚠️ El backend no devolvió probabilidades del modelo');
+        console.log('💡 Recomendación: Verificar que el backend esté usando la nueva función con probabilidades');
+      }
       
       return {
         prediction: prediction,
-        probabilities: probabilities,
-        message: response.data.message
+        probabilities: probabilities, // Probabilidades reales del XGBoost o null
+        confidence: confidence,       // Confianza real del modelo o null
+        message: response.data.message,
+        isFromModel: true,           // Confirmamos que viene del modelo
+        hasRealProbabilities: probabilities !== null,
+        modelType: response.data.model_type || 'XGBoost'
       };
-    } catch (error) {
-      // Manejo de errores centralizado
-      console.error('Error realizando la predicción:', error);
       
-      let errorMessage = 'Error al realizar la predicción';
+    } catch (error) {
+      // Manejo de errores centralizado - SIN RESPALDO
+      console.error('❌ Error realizando la predicción:', error);
+      
+      let errorMessage = 'Error al realizar la predicción con el modelo ML';
       
       if (error.response) {
-        // El servidor respondió con un código de estado fuera del rango 2xx
-        errorMessage = error.response.data.detail || error.response.data.message || `Error ${error.response.status}`;
+        console.error('❌ Error response:', error.response.data);
+        errorMessage = error.response.data.detail || error.response.data.message || `Error ${error.response.status} del modelo`;
       } else if (error.request) {
-        // La petición se realizó pero no se recibió respuesta
-        errorMessage = 'No se recibió respuesta del servidor. Asegúrate de que el backend esté ejecutándose en http://localhost:8000';
+        console.error('❌ Error request:', error.request);
+        errorMessage = 'No se pudo conectar con el modelo ML. Asegúrate de que el backend esté ejecutándose en http://localhost:8000';
+      } else {
+        console.error('❌ Error config:', error.message);
+        errorMessage = `Error en la comunicación con el modelo: ${error.message}`;
       }
       
+      // ✅ NO HAY RESPALDO - Si falla el modelo, falla la predicción
       throw new Error(errorMessage);
     }
   },
@@ -92,8 +149,11 @@ const studentService = {
     try {
       const { limit = 100, offset = 0, outcome_filter = null } = params;
       
+      console.log('📤 Obteniendo predicciones con params:', { limit, offset, outcome_filter });
+      
       // Usar el endpoint /students que existe en el backend
       const response = await axios.get(`${API_URL}/students`);
+      console.log('📥 Respuesta de estudiantes:', response.data);
       
       // Simular paginación y filtrado en el frontend ya que el backend no lo soporta
       let data = response.data || [];
@@ -104,6 +164,7 @@ const studentService = {
           item.predicted_outcome === outcome_filter || 
           item.target === outcome_filter
         );
+        console.log(`🔍 Filtrado por ${outcome_filter}, quedaron ${data.length} registros`);
       }
       
       // Simular paginación
@@ -111,6 +172,8 @@ const studentService = {
       const startIndex = offset;
       const endIndex = offset + limit;
       const paginatedData = data.slice(startIndex, endIndex);
+      
+      console.log(`📄 Paginación: ${startIndex}-${endIndex} de ${total} registros`);
       
       return {
         data: paginatedData,
@@ -121,14 +184,19 @@ const studentService = {
         offset: offset
       };
     } catch (error) {
-      console.error('Error obteniendo predicciones:', error);
+      console.error('❌ Error obteniendo predicciones:', error);
       
       let errorMessage = 'Error al obtener el listado de predicciones';
       
       if (error.response) {
+        console.error('❌ Error response:', error.response.data);
         errorMessage = error.response.data.detail || error.response.data.message || `Error ${error.response.status}`;
       } else if (error.request) {
+        console.error('❌ Error request:', error.request);
         errorMessage = 'No se recibió respuesta del servidor. Asegúrate de que el backend esté ejecutándose en http://localhost:8000';
+      } else {
+        console.error('❌ Error config:', error.message);
+        errorMessage = error.message;
       }
       
       throw new Error(errorMessage);
@@ -142,6 +210,8 @@ const studentService = {
    */
   getPredictionById: async (predictionId) => {
     try {
+      console.log(`📤 Obteniendo predicción ID: ${predictionId}`);
+      
       // Como el backend no tiene endpoint específico, obtenemos todas y filtramos
       const allPredictions = await studentService.getAllPredictions();
       const prediction = allPredictions.data.find(p => p.id === predictionId);
@@ -150,9 +220,10 @@ const studentService = {
         throw new Error('Predicción no encontrada');
       }
       
+      console.log('📥 Predicción encontrada:', prediction);
       return prediction;
     } catch (error) {
-      console.error('Error obteniendo predicción:', error);
+      console.error('❌ Error obteniendo predicción:', error);
       
       let errorMessage = 'Error al obtener la predicción';
       
@@ -162,6 +233,8 @@ const studentService = {
         errorMessage = error.response.data.detail || error.response.data.message || `Error ${error.response.status}`;
       } else if (error.request) {
         errorMessage = 'No se recibió respuesta del servidor';
+      } else {
+        errorMessage = error.message;
       }
       
       throw new Error(errorMessage);
@@ -175,7 +248,9 @@ const studentService = {
    * @returns {Object} - Datos en formato del formulario
    */
   convertToFormFormat: (predictionData) => {
-    return {
+    console.log('🔄 Convirtiendo datos de BD a formulario:', predictionData);
+    
+    const formData = {
       age_at_enrollment: predictionData.age_at_enrollment?.toString() || '',
       marital_status: predictionData.marital_status || '',
       curricular_units_1st_sem_grade: predictionData.curricular_units_1st_sem_grade?.toString() || '',
@@ -190,9 +265,13 @@ const studentService = {
       tuition_fees_up_to_date: predictionData.tuition_fees_up_to_date || '',
       previous_qualification: predictionData.previous_qualification || '',
       // Mapear nombres del backend (sin apóstrofe) al formulario
-      mothers_qualification: predictionData.mothers_qualification || '',
-      fathers_qualification: predictionData.fathers_qualification || ''
+      mothers_qualification: predictionData.mothers_qualification || predictionData["mother's_qualification"] || '',
+      fathers_qualification: predictionData.fathers_qualification || predictionData["father's_qualification"] || ''
     };
+    
+    console.log('✅ Datos convertidos para formulario:', formData);
+    
+    return formData;
   }
 };
 
