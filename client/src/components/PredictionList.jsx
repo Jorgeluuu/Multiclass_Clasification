@@ -27,13 +27,16 @@ const PredictionsList = () => {
         ...(filter && { outcome_filter: filter })
       };
       
+      console.log('Cargando predicciones con parámetros:', params);
       const response = await studentService.getAllPredictions(params);
+      console.log('Respuesta del servicio:', response);
       
-      // Estructura esperada del backend: { data: [...], total: number, page: number, totalPages: number }
-      setPredictions(response.data || response);
+      // El servicio ya maneja la estructura correcta
+      setPredictions(response.data || []);
       setTotalPages(response.totalPages || Math.ceil((response.total || 0) / itemsPerPage));
       
     } catch (err) {
+      console.error('Error cargando predicciones:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -58,8 +61,11 @@ const PredictionsList = () => {
 
   // Manejar edición de predicción
   const handleEdit = (prediction) => {
+    console.log('Editando predicción:', prediction);
+    
     // Convertir datos de BD a formato del formulario
     const formData = studentService.convertToFormFormat(prediction);
+    console.log('Datos convertidos para formulario:', formData);
     
     // Navegar a Prediction con datos pre-cargados
     navigate('/', { state: { initialData: formData } });
@@ -67,22 +73,31 @@ const PredictionsList = () => {
 
   // Formatear fecha
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    if (!dateString) return 'N/A';
+    
+    try {
+      return new Date(dateString).toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (error) {
+      return 'Fecha inválida';
+    }
   };
 
   // Formatear probabilidad como porcentaje
   const formatProbability = (probability) => {
+    if (probability === null || probability === undefined) return 'N/A';
     return `${(probability * 100).toFixed(1)}%`;
   };
 
   // Obtener color del badge según el outcome
   const getOutcomeBadgeClass = (outcome) => {
+    if (!outcome) return 'bg-gray-100 text-gray-800 border-gray-200';
+    
     switch (outcome.toLowerCase()) {
       case 'graduate':
         return 'bg-green-100 text-green-800 border-green-200';
@@ -97,6 +112,8 @@ const PredictionsList = () => {
 
   // Traducir outcome al español
   const translateOutcome = (outcome) => {
+    if (!outcome) return 'N/A';
+    
     switch (outcome.toLowerCase()) {
       case 'graduate':
         return 'Graduado';
@@ -106,6 +123,64 @@ const PredictionsList = () => {
         return 'Matriculado';
       default:
         return outcome;
+    }
+  };
+
+  // Traducir estado civil
+  const translateMaritalStatus = (status) => {
+    if (!status) return 'N/A';
+    
+    switch (status) {
+      case 'Single': return 'Soltero';
+      case 'Married': return 'Casado';
+      case 'Divorced': return 'Divorciado';
+      case 'Widower': return 'Viudo';
+      case 'Legally separated': return 'Separado';
+      default: return status;
+    }
+  };
+
+  // Obtener la predicción principal de los datos
+  const getPredictedOutcome = (prediction) => {
+    // Primero intentar con predicted_outcome (que debería venir del backend)
+    if (prediction.predicted_outcome) {
+      return prediction.predicted_outcome;
+    }
+    
+    // Si no, intentar con target (fallback)
+    if (prediction.target) {
+      return prediction.target;
+    }
+    
+    // Si tiene probabilidades, determinar la más alta
+    if (prediction.probability_graduate || prediction.probability_dropout || prediction.probability_enrolled) {
+      const probs = {
+        'Graduate': prediction.probability_graduate || 0,
+        'Dropout': prediction.probability_dropout || 0,
+        'Enrolled': prediction.probability_enrolled || 0
+      };
+      
+      const maxProb = Math.max(...Object.values(probs));
+      const predictedClass = Object.keys(probs).find(key => probs[key] === maxProb);
+      return predictedClass;
+    }
+    
+    return 'N/A';
+  };
+
+  // Obtener la probabilidad principal
+  const getMainProbability = (prediction) => {
+    const outcome = getPredictedOutcome(prediction);
+    
+    switch (outcome) {
+      case 'Graduate':
+        return prediction.probability_graduate;
+      case 'Dropout':
+        return prediction.probability_dropout;
+      case 'Enrolled':
+        return prediction.probability_enrolled;
+      default:
+        return null;
     }
   };
 
@@ -134,6 +209,15 @@ const PredictionsList = () => {
             <div>
               <h3 className="text-lg font-semibold text-red-800 font-madrid">Error al cargar predicciones</h3>
               <p className="mt-1 text-red-700 font-madrid">{error}</p>
+              <div className="mt-3">
+                <Button
+                  variant="secondary"
+                  onClick={handleRefresh}
+                  className="px-4 py-2 text-sm"
+                >
+                  Reintentar
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -239,49 +323,47 @@ const PredictionsList = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {predictions.map((prediction) => (
-                    <tr key={prediction.id} className="transition-colors duration-150 hover:bg-gray-50">
-                      <td className="px-4 py-4 text-sm text-center text-gray-800 font-madrid">
-                        {formatDate(prediction.created_at)}
-                      </td>
-                      <td className="px-4 py-4 text-sm text-center text-gray-800 font-madrid">
-                        {prediction.age_at_enrollment} años
-                      </td>
-                      <td className="px-4 py-4 text-sm text-center text-gray-800 font-madrid">
-                        {prediction.marital_status === 'Single' ? 'Soltero' :
-                         prediction.marital_status === 'Married' ? 'Casado' :
-                         prediction.marital_status === 'Divorced' ? 'Divorciado' :
-                         prediction.marital_status === 'Widower' ? 'Viudo' :
-                         prediction.marital_status === 'Legally separated' ? 'Separado' :
-                         prediction.marital_status}
-                      </td>
-                      <td className="px-4 py-4 text-sm text-center text-gray-800 font-madrid">
-                        <div className="space-y-1">
-                          <div>1º Sem: {prediction.curricular_units_1st_sem_grade}</div>
-                          <div>2º Sem: {prediction.curricular_units_2nd_sem_grade}</div>
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 text-center">
-                        <span className={`inline-flex px-3 py-1 text-sm font-medium border font-madrid ${getOutcomeBadgeClass(prediction.predicted_outcome)}`}>
-                          {translateOutcome(prediction.predicted_outcome)}
-                        </span>
-                      </td>
-                      <td className="px-4 py-4 text-sm text-center text-gray-800 font-madrid">
-                        {prediction.predicted_outcome === 'Graduate' && formatProbability(prediction.probability_graduate)}
-                        {prediction.predicted_outcome === 'Dropout' && formatProbability(prediction.probability_dropout)}
-                        {prediction.predicted_outcome === 'Enrolled' && formatProbability(prediction.probability_enrolled)}
-                      </td>
-                      <td className="px-4 py-4 text-center">
-                        <Button
-                          variant="secondary"
-                          onClick={() => handleEdit(prediction)}
-                          className="px-4 py-2 text-sm"
-                        >
-                          Editar
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
+                  {predictions.map((prediction, index) => {
+                    const predictedOutcome = getPredictedOutcome(prediction);
+                    const mainProbability = getMainProbability(prediction);
+                    
+                    return (
+                      <tr key={prediction.id || index} className="transition-colors duration-150 hover:bg-gray-50">
+                        <td className="px-4 py-4 text-sm text-center text-gray-800 font-madrid">
+                          {formatDate(prediction.created_at)}
+                        </td>
+                        <td className="px-4 py-4 text-sm text-center text-gray-800 font-madrid">
+                          {prediction.age_at_enrollment ? `${prediction.age_at_enrollment} años` : 'N/A'}
+                        </td>
+                        <td className="px-4 py-4 text-sm text-center text-gray-800 font-madrid">
+                          {translateMaritalStatus(prediction.marital_status)}
+                        </td>
+                        <td className="px-4 py-4 text-sm text-center text-gray-800 font-madrid">
+                          <div className="space-y-1">
+                            <div>1º Sem: {prediction.curricular_units_1st_sem_grade || 'N/A'}</div>
+                            <div>2º Sem: {prediction.curricular_units_2nd_sem_grade || 'N/A'}</div>
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 text-center">
+                          <span className={`inline-flex px-3 py-1 text-sm font-medium border font-madrid ${getOutcomeBadgeClass(predictedOutcome)}`}>
+                            {translateOutcome(predictedOutcome)}
+                          </span>
+                        </td>
+                        <td className="px-4 py-4 text-sm text-center text-gray-800 font-madrid">
+                          {formatProbability(mainProbability)}
+                        </td>
+                        <td className="px-4 py-4 text-center">
+                          <Button
+                            variant="secondary"
+                            onClick={() => handleEdit(prediction)}
+                            className="px-4 py-2 text-sm"
+                          >
+                            Editar
+                          </Button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '../components/Button';
 
-const StudentPredictionForm = ({ onSubmit, isLoading }) => {
+const StudentPredictionForm = ({ onSubmit, isLoading, initialData }) => {
   const [formData, setFormData] = useState({
     age_at_enrollment: '',
     marital_status: '',
@@ -16,11 +16,22 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
     scholarship_holder: '',
     tuition_fees_up_to_date: '',
     previous_qualification: '',
-    mothers_qualification: '',
-    fathers_qualification: ''
+    mothers_qualification: '', // Sin apóstrofe para coincidir con el backend
+    fathers_qualification: ''  // Sin apóstrofe para coincidir con el backend
   });
   
   const [errors, setErrors] = useState({});
+  
+  // Cargar datos iniciales si existen (para edición)
+  useEffect(() => {
+    if (initialData) {
+      console.log('Cargando datos iniciales:', initialData);
+      setFormData(prevData => ({
+        ...prevData,
+        ...initialData
+      }));
+    }
+  }, [initialData]);
   
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,6 +40,7 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
       [name]: value
     }));
     
+    // Limpiar error del campo cuando el usuario empiece a escribir
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -41,27 +53,38 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
   const validateForm = () => {
     const newErrors = {};
     
-    // Validar campos requeridos
+    // Validar edad
     if (!formData.age_at_enrollment) {
       newErrors.age_at_enrollment = "La edad es requerida";
-    } else if (formData.age_at_enrollment < 17 || formData.age_at_enrollment > 60) {
-      newErrors.age_at_enrollment = "La edad debe estar entre 17 y 60 años";
+    } else {
+      const age = parseFloat(formData.age_at_enrollment);
+      if (age < 17 || age > 60) {
+        newErrors.age_at_enrollment = "La edad debe estar entre 17 y 60 años";
+      }
     }
     
+    // Validar estado civil
     if (!formData.marital_status) {
       newErrors.marital_status = "El estado civil es requerido";
     }
     
+    // Validar calificaciones
     if (!formData.curricular_units_1st_sem_grade) {
       newErrors.curricular_units_1st_sem_grade = "La calificación es requerida";
-    } else if (formData.curricular_units_1st_sem_grade < 0 || formData.curricular_units_1st_sem_grade > 20) {
-      newErrors.curricular_units_1st_sem_grade = "La calificación debe estar entre 0 y 20";
+    } else {
+      const grade = parseFloat(formData.curricular_units_1st_sem_grade);
+      if (grade < 0 || grade > 20) {
+        newErrors.curricular_units_1st_sem_grade = "La calificación debe estar entre 0 y 20";
+      }
     }
     
     if (!formData.curricular_units_2nd_sem_grade) {
       newErrors.curricular_units_2nd_sem_grade = "La calificación es requerida";
-    } else if (formData.curricular_units_2nd_sem_grade < 0 || formData.curricular_units_2nd_sem_grade > 20) {
-      newErrors.curricular_units_2nd_sem_grade = "La calificación debe estar entre 0 y 20";
+    } else {
+      const grade = parseFloat(formData.curricular_units_2nd_sem_grade);
+      if (grade < 0 || grade > 20) {
+        newErrors.curricular_units_2nd_sem_grade = "La calificación debe estar entre 0 y 20";
+      }
     }
     
     // Validar otros campos requeridos
@@ -95,24 +118,20 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
+      // Hacer scroll al primer error
+      const firstErrorField = Object.keys(formErrors)[0];
+      const errorElement = document.querySelector(`[name="${firstErrorField}"]`);
+      if (errorElement) {
+        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        errorElement.focus();
+      }
       return;
     }
     
-    // Convertir valores numéricos antes de enviar
-    const processedData = {
-      ...formData,
-      age_at_enrollment: parseFloat(formData.age_at_enrollment),
-      curricular_units_1st_sem_grade: parseFloat(formData.curricular_units_1st_sem_grade),
-      curricular_units_1st_sem_approved: parseFloat(formData.curricular_units_1st_sem_approved),
-      curricular_units_1st_sem_evaluations: parseFloat(formData.curricular_units_1st_sem_evaluations),
-      curricular_units_2nd_sem_grade: parseFloat(formData.curricular_units_2nd_sem_grade),
-      curricular_units_2nd_sem_approved: parseFloat(formData.curricular_units_2nd_sem_approved),
-      curricular_units_2nd_sem_evaluations: parseFloat(formData.curricular_units_2nd_sem_evaluations),
-      unemployment_rate: parseFloat(formData.unemployment_rate),
-      gdp: parseFloat(formData.gdp)
-    };
-    
-    onSubmit(processedData);
+    // Los datos ya están en el formato correcto (sin apóstrofes)
+    // El servicio se encargará de la conversión final
+    console.log('Enviando datos del formulario:', formData);
+    onSubmit(formData);
   };
 
   const inputBaseClasses = "w-full p-3 border border-gray-300 bg-white text-gray-800 font-madrid focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600 transition-all duration-200 hover:border-gray-400";
@@ -122,13 +141,17 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
   const errorClasses = "mt-1 text-sm text-red-600 font-madrid text-left";
   
   return (
-    <div className="w-fullfont-madrid">
+    <div className="w-full font-madrid">
       <div className="p-8 bg-red-600">
-        <h2 className="text-3xl font-bold text-center text-white">Formulario de Predicción Académica</h2>
-        <p className="mt-2 font-bold text-center text-white">Complete la información para generar una predicción personalizada</p>
+        <h2 className="text-3xl font-bold text-center text-white">
+          {initialData ? 'Editar Predicción Académica' : 'Formulario de Predicción Académica'}
+        </h2>
+        <p className="mt-2 font-bold text-center text-white">
+          {initialData ? 'Modifique los datos para generar una nueva predicción' : 'Complete la información para generar una predicción personalizada'}
+        </p>
       </div>
       
-      <div className="space-y-8">
+      <form onSubmit={handleSubmit} className="space-y-8">
         {/* Sección 1: Información Personal */}
         <div className={sectionClasses}>
           <h3 className={sectionTitleClasses}>
@@ -146,7 +169,7 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
                 onChange={handleChange}
                 min="17"
                 max="60"
-                className={inputBaseClasses}
+                className={`${inputBaseClasses} ${errors.age_at_enrollment ? 'border-red-500' : ''}`}
                 placeholder="Ingrese la edad (17-60 años)"
               />
               {errors.age_at_enrollment && (
@@ -160,7 +183,7 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
                 name="marital_status"
                 value={formData.marital_status}
                 onChange={handleChange}
-                className={`${inputBaseClasses} appearance-none bg-white cursor-pointer`}
+                className={`${inputBaseClasses} ${errors.marital_status ? 'border-red-500' : ''} appearance-none bg-white cursor-pointer`}
                 style={{
                   backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
                   backgroundPosition: 'right 0.75rem center',
@@ -200,7 +223,7 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
                 min="0"
                 max="20"
                 step="0.1"
-                className={inputBaseClasses}
+                className={`${inputBaseClasses} ${errors.curricular_units_1st_sem_grade ? 'border-red-500' : ''}`}
                 placeholder="Calificación (0.0 - 20.0)"
               />
               {errors.curricular_units_1st_sem_grade && (
@@ -217,7 +240,7 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
                 onChange={handleChange}
                 min="0"
                 max="10"
-                className={inputBaseClasses}
+                className={`${inputBaseClasses} ${errors.curricular_units_1st_sem_approved ? 'border-red-500' : ''}`}
                 placeholder="Número de unidades (0-10)"
               />
               {errors.curricular_units_1st_sem_approved && (
@@ -234,7 +257,7 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
                 onChange={handleChange}
                 min="0"
                 max="15"
-                className={inputBaseClasses}
+                className={`${inputBaseClasses} ${errors.curricular_units_1st_sem_evaluations ? 'border-red-500' : ''}`}
                 placeholder="Número de evaluaciones (0-15)"
               />
               {errors.curricular_units_1st_sem_evaluations && (
@@ -262,7 +285,7 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
                 min="0"
                 max="20"
                 step="0.1"
-                className={inputBaseClasses}
+                className={`${inputBaseClasses} ${errors.curricular_units_2nd_sem_grade ? 'border-red-500' : ''}`}
                 placeholder="Calificación (0.0 - 20.0)"
               />
               {errors.curricular_units_2nd_sem_grade && (
@@ -279,7 +302,7 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
                 onChange={handleChange}
                 min="0"
                 max="10"
-                className={inputBaseClasses}
+                className={`${inputBaseClasses} ${errors.curricular_units_2nd_sem_approved ? 'border-red-500' : ''}`}
                 placeholder="Número de unidades (0-10)"
               />
               {errors.curricular_units_2nd_sem_approved && (
@@ -296,7 +319,7 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
                 onChange={handleChange}
                 min="0"
                 max="15"
-                className={inputBaseClasses}
+                className={`${inputBaseClasses} ${errors.curricular_units_2nd_sem_evaluations ? 'border-red-500' : ''}`}
                 placeholder="Número de evaluaciones (0-15)"
               />
               {errors.curricular_units_2nd_sem_evaluations && (
@@ -324,7 +347,7 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
                 min="7"
                 max="20"
                 step="0.1"
-                className={inputBaseClasses}
+                className={`${inputBaseClasses} ${errors.unemployment_rate ? 'border-red-500' : ''}`}
                 placeholder="Porcentaje de desempleo (7.0 - 20.0)"
               />
               {errors.unemployment_rate && (
@@ -342,7 +365,7 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
                 min="-5"
                 max="5"
                 step="0.1"
-                className={inputBaseClasses}
+                className={`${inputBaseClasses} ${errors.gdp ? 'border-red-500' : ''}`}
                 placeholder="Crecimiento del PIB (-5.0 - 5.0)"
               />
               {errors.gdp && (
@@ -356,7 +379,7 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
                 name="scholarship_holder"
                 value={formData.scholarship_holder}
                 onChange={handleChange}
-                className={`${inputBaseClasses} appearance-none bg-white cursor-pointer`}
+                className={`${inputBaseClasses} ${errors.scholarship_holder ? 'border-red-500' : ''} appearance-none bg-white cursor-pointer`}
                 style={{
                   backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
                   backgroundPosition: 'right 0.75rem center',
@@ -379,7 +402,7 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
                 name="tuition_fees_up_to_date"
                 value={formData.tuition_fees_up_to_date}
                 onChange={handleChange}
-                className={`${inputBaseClasses} appearance-none bg-white cursor-pointer`}
+                className={`${inputBaseClasses} ${errors.tuition_fees_up_to_date ? 'border-red-500' : ''} appearance-none bg-white cursor-pointer`}
                 style={{
                   backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
                   backgroundPosition: 'right 0.75rem center',
@@ -412,7 +435,7 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
                 name="previous_qualification"
                 value={formData.previous_qualification}
                 onChange={handleChange}
-                className={`${inputBaseClasses} appearance-none bg-white cursor-pointer`}
+                className={`${inputBaseClasses} ${errors.previous_qualification ? 'border-red-500' : ''} appearance-none bg-white cursor-pointer`}
                 style={{
                   backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
                   backgroundPosition: 'right 0.75rem center',
@@ -448,7 +471,7 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
                   name="mothers_qualification"
                   value={formData.mothers_qualification}
                   onChange={handleChange}
-                  className={`${inputBaseClasses} appearance-none bg-white cursor-pointer`}
+                  className={`${inputBaseClasses} ${errors.mothers_qualification ? 'border-red-500' : ''} appearance-none bg-white cursor-pointer`}
                   style={{
                     backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
                     backgroundPosition: 'right 0.75rem center',
@@ -484,7 +507,7 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
                   name="fathers_qualification"
                   value={formData.fathers_qualification}
                   onChange={handleChange}
-                  className={`${inputBaseClasses} appearance-none bg-white cursor-pointer`}
+                  className={`${inputBaseClasses} ${errors.fathers_qualification ? 'border-red-500' : ''} appearance-none bg-white cursor-pointer`}
                   style={{
                     backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
                     backgroundPosition: 'right 0.75rem center',
@@ -522,8 +545,8 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
           <Button
             type="submit"
             variant="primary"
-            onClick={handleSubmit}
             className="px-8 py-4 text-lg disabled:bg-red-300 disabled:cursor-not-allowed"
+            disabled={isLoading}
           >
             {isLoading ? (
               <span className="flex items-center">
@@ -534,11 +557,11 @@ const StudentPredictionForm = ({ onSubmit, isLoading }) => {
                 Procesando...
               </span>
             ) : (
-              'Generar Predicción'
+              initialData ? 'Actualizar Predicción' : 'Generar Predicción'
             )}
           </Button>
         </div>
-      </div>
+      </form>
     </div>
   );
 };
