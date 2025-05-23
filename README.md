@@ -15,6 +15,9 @@ Utiliza técnicas avanzadas de aprendizaje automático, específicamente XGBoost
 ├── client/                  # Frontend de la aplicación
 │   ├── src/                 # Código fuente React
 │   └── public/              # Archivos estáticos
+├── data/                    # Conjuntos de datos
+│   ├── raw/                 # Datos sin procesar
+│   └── processed/           # Datos procesados
 ├── server/                  # Backend de la aplicación
 │   ├── models/              # Modelos ML y preprocesamiento
 │   ├── database/            # Configuración de base de datos
@@ -51,6 +54,17 @@ Utiliza técnicas avanzadas de aprendizaje automático, específicamente XGBoost
 
 ## 🚀 Instalación y Configuración
 
+### Preparación de Datos
+
+1. Crear las carpetas necesarias para los datos:
+```bash
+mkdir -p data/raw data/processed
+```
+
+2. Colocar el archivo CSV con los datos del estudiante en la carpeta correspondiente:
+- Datos sin procesar: `data/raw/student_data.csv`
+- Datos procesados: `data/processed/processed_data.csv`
+
 ### Backend
 
 1. Clonar el repositorio:
@@ -71,12 +85,6 @@ source venv/bin/activate  # Linux/Mac
 pip install -r requirements.txt
 ```
 
-4. Ejecutar backend:
-```bash
-cd server
-uvicorn main:app --reload
-```
-
 ### Frontend
 
 1. Navegar al directorio del cliente:
@@ -88,12 +96,6 @@ cd client
 ```bash
 npm install
 ```
-3. Ejecución del frontend
-```bash
-cd client
-npm run dev
-```
-
 
 ## 🎯 Características Principales
 
