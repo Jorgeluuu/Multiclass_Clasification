@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Button from '../components/Button';
 
-const StudentPredictionForm = ({ onSubmit, isLoading, initialData = null }) => {
+const StudentPredictionForm = ({ onSubmit, isLoading }) => {
   const [formData, setFormData] = useState({
     age_at_enrollment: '',
     marital_status: '',
@@ -16,21 +16,11 @@ const StudentPredictionForm = ({ onSubmit, isLoading, initialData = null }) => {
     scholarship_holder: '',
     tuition_fees_up_to_date: '',
     previous_qualification: '',
-    "mother's_qualification": '',
-    "father's_qualification": ''
+    mothers_qualification: '',
+    fathers_qualification: ''
   });
   
   const [errors, setErrors] = useState({});
-  
-  // Effect para cargar datos iniciales
-  useEffect(() => {
-    if (initialData) {
-      setFormData(prev => ({
-        ...prev,
-        ...initialData
-      }));
-    }
-  }, [initialData]);
   
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -85,8 +75,8 @@ const StudentPredictionForm = ({ onSubmit, isLoading, initialData = null }) => {
       'scholarship_holder',
       'tuition_fees_up_to_date',
       'previous_qualification',
-      "mother's_qualification",
-      "father's_qualification"
+      'mothers_qualification',
+      'fathers_qualification'
     ];
     
     requiredFields.forEach(field => {
@@ -132,17 +122,10 @@ const StudentPredictionForm = ({ onSubmit, isLoading, initialData = null }) => {
   const errorClasses = "mt-1 text-sm text-red-600 font-madrid text-left";
   
   return (
-    <div className="w-full font-madrid">
+    <div className="w-fullfont-madrid">
       <div className="p-8 bg-red-600">
-        <h2 className="text-3xl font-bold text-center text-white">
-          {initialData ? 'Editar Predicción Académica' : 'Formulario de Predicción Académica'}
-        </h2>
-        <p className="mt-2 font-bold text-center text-white">
-          {initialData 
-            ? 'Modifique los campos necesarios para generar una nueva predicción' 
-            : 'Complete la información para generar una predicción personalizada'
-          }
-        </p>
+        <h2 className="text-3xl font-bold text-center text-white">Formulario de Predicción Académica</h2>
+        <p className="mt-2 font-bold text-center text-white">Complete la información para generar una predicción personalizada</p>
       </div>
       
       <div className="space-y-8">
@@ -462,8 +445,8 @@ const StudentPredictionForm = ({ onSubmit, isLoading, initialData = null }) => {
               <div>
                 <label className={labelClasses}>Calificación de la madre *</label>
                 <select
-                  name="mother's_qualification"
-                  value={formData["mother's_qualification"]}
+                  name="mothers_qualification"
+                  value={formData.mothers_qualification}
                   onChange={handleChange}
                   className={`${inputBaseClasses} appearance-none bg-white cursor-pointer`}
                   style={{
@@ -490,16 +473,16 @@ const StudentPredictionForm = ({ onSubmit, isLoading, initialData = null }) => {
                   <option value="2nd cycle of the general high school course">2º ciclo del curso general de bachillerato</option>
                   <option value="Technological specialization course">Curso de especialización tecnológica</option>
                 </select>
-                {errors["mother's_qualification"] && (
-                  <p className={errorClasses}>{errors["mother's_qualification"]}</p>
+                {errors.mothers_qualification && (
+                  <p className={errorClasses}>{errors.mothers_qualification}</p>
                 )}
               </div>
               
               <div>
                 <label className={labelClasses}>Calificación del padre *</label>
                 <select
-                  name="father's_qualification"
-                  value={formData["father's_qualification"]}
+                  name="fathers_qualification"
+                  value={formData.fathers_qualification}
                   onChange={handleChange}
                   className={`${inputBaseClasses} appearance-none bg-white cursor-pointer`}
                   style={{
@@ -526,8 +509,8 @@ const StudentPredictionForm = ({ onSubmit, isLoading, initialData = null }) => {
                   <option value="2nd cycle of the general high school course">2º ciclo del curso general de bachillerato</option>
                   <option value="Technological specialization course">Curso de especialización tecnológica</option>
                 </select>
-                {errors["father's_qualification"] && (
-                  <p className={errorClasses}>{errors["father's_qualification"]}</p>
+                {errors.fathers_qualification && (
+                  <p className={errorClasses}>{errors.fathers_qualification}</p>
                 )}
               </div>
             </div>
@@ -541,7 +524,6 @@ const StudentPredictionForm = ({ onSubmit, isLoading, initialData = null }) => {
             variant="primary"
             onClick={handleSubmit}
             className="px-8 py-4 text-lg disabled:bg-red-300 disabled:cursor-not-allowed"
-            disabled={isLoading}
           >
             {isLoading ? (
               <span className="flex items-center">
