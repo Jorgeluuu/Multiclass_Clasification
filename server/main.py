@@ -106,11 +106,3 @@ async def get_students():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"❌ Error: {e}")
     
-# -----------------------------
-# Para React
-# dist_path = os.path.join(os.path.dirname(__file__), '..', 'client', 'dist'),
-# app.mount("/assets", StaticFiles("../../client/dist/assets"))
-
-# @app.get("/")
-# async def serve_frontend():
-#     return FileResponse(os.path.join(dist_path, 'index.html'))
