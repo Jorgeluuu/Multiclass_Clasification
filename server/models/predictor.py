@@ -58,26 +58,30 @@ with open(os.path.abspath(model_path), "rb") as f:
     model = pickle.load(f)
 
 def predict_student_outcome(data: dict) -> str:
-    """
-    Predice el resultado del estudiante a partir de un diccionario con datos crudos.
+    print("📥 Entrada cruda dict:", data)
+    print("✔️ Es dict:", isinstance(data, dict))
 
-    Args:
-        data (dict): Diccionario con los datos del estudiante.
+    try:
+        df_input = pd.DataFrame([data])
+        print("🧾 DataFrame:")
+        print(df_input)
 
-    Returns:
-        str: Clase predicha ("Dropout", "Graduate", "Enrolled")
-    """
-    df_input = pd.DataFrame([data])
-    X_preprocessed = preprocessing_pipeline.transform(df_input)
+        X_preprocessed = preprocessing_pipeline.transform(df_input)
+        print("🔧 Preprocesado:")
+        print(X_preprocessed)
 
-    dmatrix = xgb.DMatrix(X_preprocessed)
-    prediction_probs = model.predict(dmatrix)
-    predicted_class = prediction_probs.argmax(axis=1)[0]
+        dmatrix = xgb.DMatrix(X_preprocessed)
+        prediction_probs = model.predict(dmatrix)
+        predicted_class = prediction_probs.argmax(axis=1)[0]
 
-    class_map = {
-        0: "Dropout",
-        1: "Graduate",
-        2: "Enrolled"
-    }
+        class_map = {
+            0: "Dropout",
+            1: "Graduate",
+            2: "Enrolled"
+        }
 
-    return class_map[predicted_class]
+        return class_map[predicted_class]
+
+    except Exception as e:
+        print(f"💥 ERROR en predictor: {e}")
+        raise
