@@ -71,6 +71,12 @@ source venv/bin/activate  # Linux/Mac
 pip install -r requirements.txt
 ```
 
+4. Ejecutar backend:
+```bash
+cd server
+uvicorn main:app --reload
+```
+
 ### Frontend
 
 1. Navegar al directorio del cliente:
@@ -82,6 +88,12 @@ cd client
 ```bash
 npm install
 ```
+3. Ejecución del frontend
+```bash
+cd client
+npm run dev
+```
+
 
 ## 🎯 Características Principales
 
