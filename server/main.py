@@ -106,14 +106,6 @@ async def get_students():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"❌ Error: {e}")
     
-      // GET request
- useEffect(() => {axios.get('http://localhost:8000/api/data').then(response => {
-        setMessage(response.data.message);
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
-  }, []);
 # -----------------------------
 
 dist_path = os.path.join(os.path.dirname(__file__), '..', 'client', 'dist'),
