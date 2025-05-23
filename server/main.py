@@ -51,6 +51,13 @@ class StudentData(BaseModel):
     fathers_qualification: str
 
     target: str
+    
+    # ✅ NUEVOS CAMPOS PARA PROBABILIDADES INDIVIDUALES
+    probability_graduate: Optional[float] = None
+    probability_dropout: Optional[float] = None
+    probability_enrolled: Optional[float] = None
+    predicted_outcome: Optional[str] = None
+    confidence: Optional[float] = None
 
 app = FastAPI(
     title="API de Predicción Estudiantil con XGBoost",
@@ -131,9 +138,26 @@ async def predict_student(input_data: StudentInput):
                 detail=f"Confianza inválida: {confidence}. Debe estar entre 0.0 y 1.0"
             )
 
-        # ✅ GUARDAR EN SUPABASE CON INFORMACIÓN ADICIONAL
+        # ✅ GUARDAR EN SUPABASE CON PROBABILIDADES INDIVIDUALES
         try:
-            student_data = StudentData(**input_data.dict(), target=prediction)
+            # Crear datos base del estudiante
+            student_data_dict = input_data.dict()
+            student_data_dict['target'] = prediction
+            
+            # ✅ AGREGAR PROBABILIDADES INDIVIDUALES para que el frontend las encuentre
+            student_data_dict['probability_graduate'] = probabilities.get('Graduate', 0.0)
+            student_data_dict['probability_dropout'] = probabilities.get('Dropout', 0.0) 
+            student_data_dict['probability_enrolled'] = probabilities.get('Enrolled', 0.0)
+            student_data_dict['predicted_outcome'] = prediction  # Campo adicional
+            student_data_dict['confidence'] = confidence
+            
+            print(f"💾 Datos para guardar en Supabase:")
+            print(f"   probability_graduate: {student_data_dict['probability_graduate']}")
+            print(f"   probability_dropout: {student_data_dict['probability_dropout']}")
+            print(f"   probability_enrolled: {student_data_dict['probability_enrolled']}")
+            
+            # Crear objeto StudentData extendido
+            student_data = StudentData(**student_data_dict)
             response = supabase.table("students").insert(student_data.model_dump()).execute()
             
             if response.data:

@@ -11,8 +11,8 @@ sys.modules['preprocessing'] = preprocessing_module
 
 # Rutas relativas
 current_dir = os.path.dirname(os.path.abspath(__file__))
-pipeline_path = os.path.join(current_dir, "..", "data", "xgboost_multiclass_pipeline.pkl")
-model_path = os.path.join(current_dir, "..", "data", "xgboost_multiclass_model.pkl")
+pipeline_path = os.path.join(current_dir, "..", "artifacts", "xgboost_multiclass_pipeline.pkl")
+model_path = os.path.join(current_dir, "..", "artifacts", "xgboost_multiclass_model.pkl")
 
 print(f"🔍 Cargando desde:")
 print(f"   Pipeline: {pipeline_path}")

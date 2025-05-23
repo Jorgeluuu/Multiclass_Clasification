@@ -23,7 +23,7 @@ raw_data_path = os.path.join(data_root_path, "raw_data.csv")
 process_data_path = os.path.join(data_root_path, "dataset_procesado.csv")
 
 # Rutas para guardar modelos (en server/data)
-data_server_path = os.path.join(server_path, "data")      # \...\Multiclass_Clasification\server\data
+data_server_path = os.path.join(server_path, "artifacts")      # \...\Multiclass_Clasification\server\data
 pipeline_path = os.path.join(data_server_path, "xgboost_multiclass_pipeline.pkl")
 model_path = os.path.join(data_server_path, "xgboost_multiclass_model.pkl")
 
@@ -334,4 +334,4 @@ except Exception as e:
 
 print("\n" + "="*60)
 print("🎯 PIPELINE CORREGIDO Y VERIFICADO")
-print("="*60)s
+print("="*60)
