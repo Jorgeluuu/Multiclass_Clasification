@@ -83,8 +83,10 @@ mkdir -p data/raw data/processed
 
 2. Colocar el archivo CSV con los datos del estudiante en la carpeta correspondiente:
 - Datos sin procesar: `data/raw/student_data.csv`
-- Datos procesados: `data/processed/processed_data.csv`
+   Debes descargar el dataset de [Predict students' dropout and academic success](https://archive.ics.uci.edu/dataset/468/online+shoppers+purchasing+intention+dataset) y colocarlo en la carpeta `data/raw/`.
 
+- Datos procesados: `data/processed/processed_data.csv`
+   Estos se crearan automaticamente
 
 ### Frontend
 
