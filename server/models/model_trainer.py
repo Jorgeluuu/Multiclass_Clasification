@@ -20,7 +20,7 @@ project_root = os.path.dirname(server_path)               # \...\Multiclass_Clas
 
 data_root_path = os.path.join(project_root, "data")       # \...\Multiclass_Clasification\data
 raw_data_path = os.path.join(data_root_path, "raw_data.csv")
-process_data_path = os.path.join(data_root_path, "dataset_procesado.csv")
+process_data_path = os.path.join(data_root_path, "processed", "dataset_procesado.csv")
 
 # Rutas para guardar modelos (en server/data)
 data_server_path = os.path.join(server_path, "artifacts")      # \...\Multiclass_Clasification\server\data
