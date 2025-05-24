@@ -1,0 +1,35 @@
+# render-backend.yaml
+# Configuración para el servicio de backend en Render
+
+services:
+  - type: web
+    name: multiclass-prediction-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile.backend
+    plan: free  # o starter si necesitas más recursos
+    branch: main
+    healthCheckPath: /
+    envVars:
+      - key: PYTHONPATH
+        value: /app
+      - key: SUPABASE_URL
+        value: https://pajghemlgekomqscqeme.supabase.co/
+      - key: SUPABASE_KEY
+        sync: false  # Se configurará manualmente en Render UI
+      - key: POSTGRES_HOST
+        value: aws-0-us-east-2.pooler.supabase.com
+      - key: POSTGRES_DB
+        value: postgres
+      - key: POSTGRES_USER
+        value: postgres.pajghemlgekomqscqeme
+      - key: POSTGRES_PASSWORD
+        sync: false  # Se configurará manualmente en Render UI
+      - key: POSTGRES_PORT
+        value: 5432
+    buildCommand: |
+      # Crear directorio para artifacts si no existe
+      mkdir -p /app/server/artifacts
+      
+      # Aquí podrías ejecutar el entrenamiento del modelo si fuera necesario
+      # python -m server.models.model_trainer
+    startCommand: uvicorn server.main:app --host 0.0.0.0 --port $PORT
