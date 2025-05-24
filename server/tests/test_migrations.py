@@ -5,6 +5,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../.
 import pytest
 from server.database.migrations import DatabaseMigration
 
+# Test Unitario para la migración de la base de datos
 def test_get_complete_student_schema_keys():
     # 1. Instancia la clase
     migration = DatabaseMigration()

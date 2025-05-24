@@ -6,7 +6,7 @@ import pytest
 from server.models.predictor import predict_student_outcome_with_probabilities
 
 def test_predict_student_outcome_with_probabilities():
-    # 1. Simula datos de entrada válidos (ajusta los campos según tu modelo)
+    # 1. Simula datos de entrada válidos 
     data = {
         'curricular_units_1st_sem_grade': 15.0,
         'curricular_units_2nd_sem_grade': 14.0,
