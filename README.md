@@ -14,50 +14,6 @@ Utiliza técnicas avanzadas de aprendizaje automático, específicamente XGBoost
 ```
 Multiclass_Clasification/
 │
-├── 📁 data/                                    # Datos del proyecto
-│   ├── raw/
-│   │   └── raw_data.csv                        # Datos originales sin procesar
-│   └── processed/
-│       └── dataset_procesado.csv               # Datos limpios y transformados para ML
-│
-├── 📁 notebooks/                               # Análisis exploratorio y experimentación
-│   ├── EDA.ipynb                              # Análisis Exploratorio de Datos completo
-│   └── data_cleaning.ipynb                    # Limpieza y preprocesamiento de datos
-│
-├── 📁 model_training/                          # Entrenamiento de modelos ML
-│   ├── xgboost.ipynb                          # Entrenamiento del modelo XGBoost
-│   └── random_forest.ipynb                    # Entrenamiento del modelo Random Forest
-│
-├── 📁 models/                                  # Modelos entrenados y artefactos
-│   ├── xgboost.ipynb                          # Notebook de entrenamiento XGBoost
-│   └── trained/
-│       ├── xgboost_multiclass_model.pkl       # Modelo XGBoost serializado
-│       └── ...                                # Otros modelos entrenados
-│
-├── 📁 server/                                  # Backend de la aplicación (Python/FastAPI)
-│   ├── __init__.py                            # Hace que server sea un paquete Python
-│   ├── main.py                                # Punto de entrada del servidor FastAPI
-│   ├── __pycache__/                           # Archivos compilados de Python
-│   │
-│   ├── 📁 models/                             # Lógica de Machine Learning
-│   │   ├── preprocessing.py                   # Pipeline de preprocesamiento de datos
-│   │   ├── predictor.py                       # Función principal de predicción
-│   │   └── schemas.py                         # Esquemas de validación con Pydantic
-│   │
-│   ├── 📁 database/                           # Gestión de base de datos
-│   │   ├── migrations.py                      # Sistema de migración y creación de tablas
-│   │   └── supabase_client.py                 # Cliente para conectar con Supabase
-│   │
-│   ├── 📁 artifacts/                          # Modelos y pipelines serializados
-│   │   ├── xgboost_multiclass_pipeline.pkl    # Pipeline de preprocesamiento serializado
-│   │   ├── xgboost_multiclass_model.pkl       # Modelo XGBoost para producción
-│   │   └── ...                                # Otros artefactos ML
-│   │
-│   └── 📁 tests/                              # Tests unitarios y de integración
-│       ├── test_preprocessing.py              # Tests del pipeline de preprocesamiento
-│       ├── test_predictor.py                  # Tests de la función de predicción
-│       └── test_migrations.py                 # Tests del sistema de migración
-│
 ├── 📁 client/                                  # Frontend de la aplicación (React/Vite)
 │   ├── index.html                             # Archivo HTML principal
 │   ├── package.json                           # Dependencias y scripts de npm
@@ -89,9 +45,53 @@ Multiclass_Clasification/
 │               ├── student-monitoring.jpg     # Imagen para página de seguimiento
 │               └── students-prediction.jpg    # Imagen para página de predicción
 │
-├── requirements.txt                            # Dependencias de Python del backend
+├── 📁 data/                                    # Datos del proyecto
+│   ├── raw/
+│   │   └── raw_data.csv                        # Datos originales sin procesar
+│   └── processed/
+│       └── dataset_procesado.csv               # Datos limpios y transformados para ML
+│
+├── 📁 models/                                  # Modelos entrenados y artefactos
+│   ├── xgboost.ipynb                          # Notebook de entrenamiento XGBoost
+│   └── trained/
+│       ├── xgboost_multiclass_model.pkl       # Modelo XGBoost serializado
+│       └── ...                                # Otros modelos entrenados
+│
+├── 📁 model_training/                          # Entrenamiento de modelos ML
+│   ├── xgboost.ipynb                          # Entrenamiento del modelo XGBoost
+│   └── random_forest.ipynb                    # Entrenamiento del modelo Random Forest
+│
+├── 📁 notebooks/                               # Análisis exploratorio y experimentación
+│   ├── EDA.ipynb                              # Análisis Exploratorio de Datos completo
+│   └── data_cleaning.ipynb                    # Limpieza y preprocesamiento de datos
+│
+├── 📁 server/                                  # Backend de la aplicación (Python/FastAPI)
+│   ├── __init__.py                            # Hace que server sea un paquete Python
+│   ├── main.py                                # Punto de entrada del servidor FastAPI
+│   ├── __pycache__/                           # Archivos compilados de Python
+│   │
+│   ├── 📁 artifacts/                          # Modelos y pipelines serializados
+│   │   ├── xgboost_multiclass_pipeline.pkl    # Pipeline de preprocesamiento serializado
+│   │   ├── xgboost_multiclass_model.pkl       # Modelo XGBoost para producción
+│   │   └── ...                                # Otros artefactos ML
+│   │
+│   ├── 📁 database/                           # Gestión de base de datos
+│   │   ├── migrations.py                      # Sistema de migración y creación de tablas
+│   │   └── supabase_client.py                 # Cliente para conectar con Supabase
+│   │
+│   ├── 📁 models/                             # Lógica de Machine Learning
+│   │   ├── preprocessing.py                   # Pipeline de preprocesamiento de datos
+│   │   ├── predictor.py                       # Función principal de predicción
+│   │   └── schemas.py                         # Esquemas de validación con Pydantic
+│   │
+│   └── 📁 tests/                              # Tests unitarios y de integración
+│       ├── test_migrations.py                 # Tests del sistema de migración
+│       ├── test_predictor.py                  # Tests de la función de predicción
+│       └── test_preprocessing.py              # Tests del pipeline de preprocesamiento
+│
+├── .gitignore                                 # Archivos a ignorar por Git
 ├── README.md                                  # Documentación del proyecto
-└── .gitignore                                 # Archivos a ignorar por Git
+└── requirements.txt                           # Dependencias de Python del backend
 ```
 
 ## 🛠️ Tecnologías Utilizadas
