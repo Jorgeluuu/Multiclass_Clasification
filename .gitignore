@@ -1,3 +1,5 @@
+node_modules
+
 # Extras
 .python-version
 uv.lock
