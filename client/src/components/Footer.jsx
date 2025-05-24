@@ -3,7 +3,6 @@ import madridLogo from '../assets/images/madrid-logo.png';
 
 const Footer = () => {
   const footerLinks = [
-    { name: 'BOCM', href: '#' },
     { name: 'Contacta', href: '#' },
     { name: 'Reclamaciones y sugerencias', href: '#' },
     { name: 'Redes sociales', href: '#' },
@@ -60,8 +59,14 @@ const Footer = () => {
       <div className="border-t border-white">
         <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
           <div className="py-4">
-            <p className="text-sm text-center">
-              Todos los portales de la Comunidad de Madrid
+          <p className="text-sm text-center">
+              Proyecto educativo - Bootcamp de Inteligencia Artificial Factoría F5
+              <br />
+              <span className="text-xs opacity-75">
+                Diseño inspirado en los portales de la Comunidad de Madrid con fines educativos únicamente
+                <br />
+                No está afiliado ni representa a ninguna institución oficial
+              </span>
             </p>
           </div>
         </div>

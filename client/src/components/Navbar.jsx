@@ -87,7 +87,7 @@ const Navbar = () => {
               <Link to="/" className="flex items-center cursor-pointer">
                 {/* Texto solo visible en desktop */}
                 <div className="hidden md:block">
-                  <span className="text-2xl font-semibold">Comunidad de Madrid</span>
+                  <span className="text-2xl font-semibold">Comunidad de F5</span>
                 </div>
                 <img 
                   src={madridLogo} 
