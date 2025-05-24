@@ -53,18 +53,6 @@ Utiliza técnicas avanzadas de aprendizaje automático, específicamente XGBoost
 - Git
 
 ## 🚀 Instalación y Configuración
-
-### Preparación de Datos
-
-1. Crear las carpetas necesarias para los datos:
-```bash
-mkdir -p data/raw data/processed
-```
-
-2. Colocar el archivo CSV con los datos del estudiante en la carpeta correspondiente:
-- Datos sin procesar: `data/raw/student_data.csv`
-- Datos procesados: `data/processed/processed_data.csv`
-
 ### Backend
 
 1. Clonar el repositorio:
@@ -78,12 +66,25 @@ cd Multiclass_Clasification
 python -m venv venv
 .\venv\Scripts\activate  # Windows
 source venv/bin/activate  # Linux/Mac
+source env/Scripts/activate #Windows-Bash
 ```
 
-3. Instalar dependencias:
+Instalar dependencias desde requirements.txt:
 ```bash
 pip install -r requirements.txt
 ```
+
+### Preparación de Datos
+
+1. Crear las carpetas necesarias para los datos:
+```bash
+mkdir -p data/raw data/processed
+```
+
+2. Colocar el archivo CSV con los datos del estudiante en la carpeta correspondiente:
+- Datos sin procesar: `data/raw/student_data.csv`
+- Datos procesados: `data/processed/processed_data.csv`
+
 
 ### Frontend
 
