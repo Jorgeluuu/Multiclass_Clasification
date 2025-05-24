@@ -1,0 +1,63 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Documentación
+README.md
+*.md
+
+# Datos locales
+data/
+*.csv
+*.xlsx
+*.xls
+*.db
+*.sqlite
+
+# Entornos virtuales
+venv/
+env/
+ENV/
+.env.local
+.env.development
+.env.test
+
+# Archivos de caché Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Jupyter notebooks
+*.ipynb
+.ipynb_checkpoints/
+
+# Logs
+logs/
+*.log
+
+# Node modules (se instalarán en el container)
+client/node_modules/
+client/dist/
+client/.vite/
+
+# IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# OS específicos
+.DS_Store
+Thumbs.db
+
+# Temporales
+*.tmp
+*.bak
+*.swp
+musor/
