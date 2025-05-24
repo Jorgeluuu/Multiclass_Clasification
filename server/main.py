@@ -223,6 +223,43 @@ async def get_students():
             detail=f"Error interno al obtener estudiantes: {str(e)}"
         )
 
+@app.put("/students/{student_id}")
+async def update_student(
+    student_id: int,
+    input_data: StudentInput
+):
+    try:
+        print(f"\n🔧 Actualizando estudiante ID: {student_id}")
+        
+        # Generar nueva predicción con los datos actualizados
+        print("🔮 Generando nueva predicción...")
+        prediction_result = predict_student_outcome_with_probabilities(input_data.dict())
+        
+        # Preparar datos completos para actualizar
+        update_data = input_data.dict()
+        update_data['target'] = prediction_result['prediction']
+        update_data['probability_graduate'] = prediction_result['probabilities'].get('Graduate', 0.0)
+        update_data['probability_dropout'] = prediction_result['probabilities'].get('Dropout', 0.0)
+        update_data['probability_enrolled'] = prediction_result['probabilities'].get('Enrolled', 0.0)
+        update_data['predicted_outcome'] = prediction_result['prediction']
+        update_data['confidence'] = prediction_result['confidence']
+        
+        # Actualizar en Supabase
+        response = supabase.table("students").update(update_data).eq("id", student_id).execute()
+
+        if response.data and len(response.data) > 0:
+            print("✅ Actualización exitosa")
+            return {
+                "message": f"Predicción actualizada correctamente",
+                "updated": response.data[0]
+            }
+        else:
+            raise HTTPException(status_code=404, detail="Estudiante no encontrado")
+
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        raise HTTPException(status_code=500, detail=f"Error al actualizar: {str(e)}")
+
 # ✅ ENDPOINT ADICIONAL PARA VERIFICAR ESTADO DEL MODELO
 @app.get("/model/status")
 async def model_status():

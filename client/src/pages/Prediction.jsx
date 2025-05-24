@@ -11,6 +11,8 @@ const Prediction = () => {
   const [predictionResult, setPredictionResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [predictionId, setPredictionId] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
   
   // Obtener datos iniciales del state de navegación (cuando vienen de Monitoring)
   const initialData = location.state?.initialData || null;
@@ -18,7 +20,15 @@ const Prediction = () => {
   // Limpiar el state de navegación después de usar los datos iniciales
   useEffect(() => {
     if (initialData) {
-      console.log('Datos iniciales recibidos desde Monitoring:', initialData);
+      console.log('Datos iniciales recibidos:', initialData);
+      
+      // ✅ DETECTAR MODO EDICIÓN
+      if (location.state?.predictionId) {
+        setPredictionId(location.state.predictionId);
+        setIsEditMode(true);
+        console.log('Modo edición activado para ID:', location.state.predictionId);
+      }
+      
       // Limpiar el state para evitar que persista en navegaciones futuras
       navigate(location.pathname, { replace: true, state: {} });
     }
@@ -28,17 +38,30 @@ const Prediction = () => {
   const handleFormSubmit = async (formData) => {
     setIsLoading(true);
     setError(null);
-    setPredictionResult(null); // Limpiar resultado anterior
+    setPredictionResult(null);
     
     console.log('Enviando datos al backend:', formData);
     
     try {
-      const result = await studentService.predictOutcome(formData);
-      console.log('Resultado recibido del backend:', result);
+      let result;
       
+      // ✅ DETECTAR SI ES EDICIÓN O NUEVA PREDICCIÓN
+      if (isEditMode && predictionId) {
+        result = await studentService.updatePrediction(predictionId, formData);
+      } else {
+        result = await studentService.predictOutcome(formData);
+      }
+      
+      console.log('Resultado recibido:', result);
       setPredictionResult(result);
       
-      // Desplazamiento suave hacia los resultados
+      // ✅ SI ES EDICIÓN, RESETEAR MODO
+      if (isEditMode) {
+        setIsEditMode(false);
+        setPredictionId(null);
+      }
+      
+      // Scroll a resultados
       setTimeout(() => {
         const resultsSection = document.getElementById('results-section');
         if (resultsSection) {
@@ -47,10 +70,9 @@ const Prediction = () => {
       }, 100);
       
     } catch (err) {
-      console.error('Error al realizar predicción:', err);
+      console.error('Error:', err);
       setError(err.message);
       
-      // Scroll al área de error
       setTimeout(() => {
         const errorSection = document.getElementById('error-section');
         if (errorSection) {
@@ -66,6 +88,8 @@ const Prediction = () => {
   const handleNewPrediction = () => {
     setPredictionResult(null);
     setError(null);
+    setIsEditMode(false);  
+    setPredictionId(null);     
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -115,7 +139,9 @@ const Prediction = () => {
               <div className="flex items-center">
                 <div className="flex-shrink-0 w-1 h-6 mr-3 bg-blue-600"></div>
                 <div>
-                  <h3 className="text-lg font-semibold text-blue-800 font-madrid">Editando predicción existente</h3>
+                  <h3 className="text-lg font-semibold text-blue-800 font-madrid">
+                    {isEditMode ? `Editando Expediente #${predictionId}` : 'Editando predicción existente'}
+                  </h3>
                   <p className="mt-1 text-blue-700 font-madrid">
                     Los campos han sido pre-cargados con los datos de la predicción seleccionada. 
                     Modifique los valores que desee y genere una nueva predicción.
@@ -131,6 +157,7 @@ const Prediction = () => {
               onSubmit={handleFormSubmit} 
               isLoading={isLoading}
               initialData={initialData}
+              isEditMode={isEditMode}
             />
           </div>
           

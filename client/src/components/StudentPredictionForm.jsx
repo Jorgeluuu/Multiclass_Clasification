@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Button from '../components/Button';
 
-const StudentPredictionForm = ({ onSubmit, isLoading, initialData }) => {
+const StudentPredictionForm = ({ onSubmit, isLoading, initialData, isEditMode = false }) => {
   const [formData, setFormData] = useState({
     age_at_enrollment: '',
     marital_status: '',
@@ -16,8 +16,8 @@ const StudentPredictionForm = ({ onSubmit, isLoading, initialData }) => {
     scholarship_holder: '',
     tuition_fees_up_to_date: '',
     previous_qualification: '',
-    mothers_qualification: '', // Sin apóstrofe para coincidir con el backend
-    fathers_qualification: ''  // Sin apóstrofe para coincidir con el backend
+    mothers_qualification: '', 
+    fathers_qualification: ''  
   });
   
   const [errors, setErrors] = useState({});
@@ -115,47 +115,68 @@ const StudentPredictionForm = ({ onSubmit, isLoading, initialData }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     
+    // Validar el formulario
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
-      // Hacer scroll al primer error
+      // Scroll al primer error encontrado
       const firstErrorField = Object.keys(formErrors)[0];
       const errorElement = document.querySelector(`[name="${firstErrorField}"]`);
       if (errorElement) {
-        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        errorElement.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        });
         errorElement.focus();
       }
       return;
     }
     
-    // Los datos ya están en el formato correcto (sin apóstrofes)
-    // El servicio se encargará de la conversión final
-    console.log('Enviando datos del formulario:', formData);
-    onSubmit(formData);
+    // Preparar los datos para enviar
+    const submissionData = {
+      age_at_enrollment: parseFloat(formData.age_at_enrollment),
+      marital_status: formData.marital_status,
+      curricular_units_1st_sem_grade: parseFloat(formData.curricular_units_1st_sem_grade),
+      curricular_units_1st_sem_approved: parseInt(formData.curricular_units_1st_sem_approved),
+      curricular_units_1st_sem_evaluations: parseInt(formData.curricular_units_1st_sem_evaluations),
+      curricular_units_2nd_sem_grade: parseFloat(formData.curricular_units_2nd_sem_grade),
+      curricular_units_2nd_sem_approved: parseInt(formData.curricular_units_2nd_sem_approved),
+      curricular_units_2nd_sem_evaluations: parseInt(formData.curricular_units_2nd_sem_evaluations),
+      unemployment_rate: parseFloat(formData.unemployment_rate),
+      gdp: parseFloat(formData.gdp),
+      scholarship_holder: formData.scholarship_holder,
+      tuition_fees_up_to_date: formData.tuition_fees_up_to_date,
+      previous_qualification: formData.previous_qualification,
+      mothers_qualification: formData.mothers_qualification,
+      fathers_qualification: formData.fathers_qualification
+    };
+  
+    console.log('Datos enviados:', submissionData);
+    onSubmit(submissionData);
   };
 
   const inputBaseClasses = "w-full p-3 border border-gray-300 bg-white text-gray-800 font-madrid focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600 transition-all duration-200 hover:border-gray-400";
   const labelClasses = "block mb-2 text-sm font-semibold text-gray-800 font-madrid text-left";
-  const sectionClasses = "p-6 bg-gray-50 border border-gray-200";
-  const sectionTitleClasses = "mb-6 text-xl font-bold text-gray-800 font-madrid flex items-center justify-start";
+  const sectionTitleClasses = "mb-6 text-xl font-bold text-gray-800 font-madrid flex items-center justify-start text-left w-full";
+  const sectionClasses = "p-6 bg-gray-50 border border-gray-200 text-left";
   const errorClasses = "mt-1 text-sm text-red-600 font-madrid text-left";
   
   return (
     <div className="w-full font-madrid">
       <div className="p-8 bg-red-600">
-        <h2 className="text-3xl font-bold text-center text-white">
-          {initialData ? 'Editar Predicción Académica' : 'Formulario de Predicción Académica'}
+        <h2 className="text-3xl font-bold text-left text-white font-madrid md:text-center">
+          {isEditMode ? 'Editar Predicción Académica' : 'Formulario de Predicción Académica'}
         </h2>
-        <p className="mt-2 font-bold text-center text-white">
-          {initialData ? 'Modifique los datos para generar una nueva predicción' : 'Complete la información para generar una predicción personalizada'}
+        <p className="mt-2 font-bold text-left text-white font-madrid md:text-center">
+          {isEditMode ? 'Modifique los datos para actualizar la predicción' : 'Complete la información para generar una predicción personalizada'}
         </p>
       </div>
       
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Sección 1: Información Personal */}
         <div className={sectionClasses}>
-          <h3 className={sectionTitleClasses}>
-            <div className="flex-shrink-0 w-1 h-6 mr-3 bg-red-600"></div>
+        <h3 className={sectionTitleClasses}>
+        <div className="flex-shrink-0 w-1 h-6 mr-3 bg-red-600"></div>
             Información Personal
           </h3>
           
@@ -208,7 +229,7 @@ const StudentPredictionForm = ({ onSubmit, isLoading, initialData }) => {
         {/* Sección 2: Información Académica - Primer Semestre */}
         <div className={sectionClasses}>
           <h3 className={sectionTitleClasses}>
-            <div className="flex-shrink-0 w-1 h-6 mr-3 bg-red-600"></div>
+            <div className="flex-shrink-0 w-1 h-6 mr-3 bg-red-600"></div> 
             Información Académica - Primer Semestre
           </h3>
           
@@ -542,7 +563,7 @@ const StudentPredictionForm = ({ onSubmit, isLoading, initialData }) => {
         
         {/* Botón de envío */}
         <div className="flex justify-center p-8 border border-gray-200 bg-gray-50">
-          <Button
+        <Button
             type="submit"
             variant="primary"
             className="px-8 py-4 text-lg disabled:bg-red-300 disabled:cursor-not-allowed"
@@ -557,7 +578,7 @@ const StudentPredictionForm = ({ onSubmit, isLoading, initialData }) => {
                 Procesando...
               </span>
             ) : (
-              initialData ? 'Actualizar Predicción' : 'Generar Predicción'
+              isEditMode ? 'Actualizar Predicción' : 'Generar Predicción'
             )}
           </Button>
         </div>
