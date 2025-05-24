@@ -39,9 +39,13 @@ const Monitoring = () => {
         <div className="w-full">
           {/* Encabezado rojo igual que el formulario */}
           <div className="p-8 bg-red-600">
-            <h2 className="text-3xl font-bold text-center text-white font-madrid">Historial de Predicciones Académicas</h2>
-            <p className="mt-2 font-bold text-center text-white font-madrid">Revise y edite las predicciones realizadas anteriormente</p>
-          </div>
+          <h2 className="text-3xl font-bold text-left text-white font-madrid md:text-center">
+            Historial de Predicciones Académicas
+          </h2>
+          <p className="mt-2 font-bold text-left text-white font-madrid md:text-center">
+            Revise y edite las predicciones realizadas anteriormente
+          </p>
+        </div>
           
           {/* Contenedor del listado - pegado al encabezado rojo */}
           <div className="border border-gray-200 bg-gray-50">

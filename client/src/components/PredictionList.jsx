@@ -67,8 +67,13 @@ const PredictionsList = () => {
     const formData = studentService.convertToFormFormat(prediction);
     console.log('Datos convertidos para formulario:', formData);
     
-    // Navegar a Prediction con datos pre-cargados
-    navigate('/', { state: { initialData: formData } });
+    // ✅ SOLO AÑADIR predictionId al state
+    navigate('/', { 
+      state: { 
+        initialData: formData,
+        predictionId: prediction.id  // ✅ Pasar el ID
+      } 
+    });
   };
 
   // Formatear fecha
@@ -83,7 +88,7 @@ const PredictionsList = () => {
         hour: '2-digit',
         minute: '2-digit'
       });
-    } catch (error) {
+    } catch (_) {
       return 'Fecha inválida';
     }
   };
@@ -229,27 +234,30 @@ const PredictionsList = () => {
     <div className="border border-gray-200 bg-gray-50">
       {/* Header con filtros - estilo del formulario */}
       <div className="p-6 border-b border-gray-200 bg-gray-50">
-        <h3 className="flex items-center justify-start mb-6 text-xl font-bold text-gray-800 font-madrid">
+      <h3 className="flex items-center justify-start w-full mb-6 text-xl font-bold text-left text-gray-800 font-madrid">
           <div className="flex-shrink-0 w-1 h-6 mr-3 bg-red-600"></div>
           Historial de Predicciones
         </h3>
         
-        <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
-          <div>
-            <p className="text-gray-600 font-madrid">
+        <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
+          {/* Contador de predicciones  */}
+          <div className="flex-shrink-0">
+            <p className="text-left text-gray-600 font-madrid lg:text-left">
               {predictions.length} predicciones encontradas
             </p>
           </div>
           
-          {/* Filtros y botón actualizar */}
-          <div className="flex items-center space-x-4">
-            {/* Filtro por outcome */}
-            <div className="flex items-center space-x-3">
-              <label className="text-sm font-semibold text-gray-700 font-madrid">Filtrar por resultado:</label>
+      
+          <div className="flex flex-col space-y-3 sm:flex-row sm:items-start lg:items-center sm:space-y-0 sm:space-x-3">
+            {/* Filtro por outcome*/}
+            <div className="flex flex-col space-y-2 sm:flex-row sm:items-start lg:items-center sm:space-y-0 sm:space-x-3">
+              <label className="text-sm font-semibold text-left text-gray-700 font-madrid whitespace-nowrap sm:text-left lg:text-left">
+                Filtrar por resultado:
+              </label>
               <select
                 value={outcomeFilter}
                 onChange={(e) => handleFilterChange(e.target.value)}
-                className="w-56 px-3 py-3 text-gray-800 transition-all duration-200 bg-white border border-gray-300 appearance-none cursor-pointer font-madrid focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600"
+                className="w-full px-3 py-3 text-gray-800 transition-all duration-200 bg-white border border-gray-300 appearance-none cursor-pointer sm:w-48 lg:w-56 font-madrid focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600"
                 style={{
                   backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
                   backgroundPosition: 'right 0.75rem center',
@@ -268,7 +276,7 @@ const PredictionsList = () => {
             <Button
               variant="secondary"
               onClick={handleRefresh}
-              className="px-4 py-3 text-sm"
+              className="w-full px-4 py-3 text-sm sm:w-auto whitespace-nowrap"
               disabled={loading}
             >
               Actualizar
@@ -299,6 +307,9 @@ const PredictionsList = () => {
               <table className="min-w-full bg-white">
                 <thead className="bg-gray-50">
                   <tr>
+                  <th className="px-4 py-3 text-xs font-semibold tracking-wider text-center text-gray-700 uppercase border-b font-madrid">
+                      Nº Expediente
+                    </th>
                     <th className="px-4 py-3 text-xs font-semibold tracking-wider text-center text-gray-700 uppercase border-b font-madrid">
                       Fecha
                     </th>
@@ -329,6 +340,9 @@ const PredictionsList = () => {
                     
                     return (
                       <tr key={prediction.id || index} className="transition-colors duration-150 hover:bg-gray-50">
+                        <td className="px-4 py-4 text-sm text-center text-gray-800 font-madrid">
+                          #{prediction.id || 'N/A'}
+                        </td>
                         <td className="px-4 py-4 text-sm text-center text-gray-800 font-madrid">
                           {formatDate(prediction.created_at)}
                         </td>
