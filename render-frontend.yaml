@@ -1,0 +1,17 @@
+# render-frontend.yaml
+# Configuración para el servicio de frontend en Render
+
+services:
+  - type: web
+    name: multiclass-prediction-frontend
+    runtime: docker
+    dockerfilePath: ./Dockerfile.frontend
+    plan: free
+    branch: main
+    envVars:
+      - key: VITE_API_URL
+        value: https://multiclass-prediction-api.onrender.com  # URL de tu backend en Render
+    buildCommand: |
+      cd client
+      npm ci
+      npm run build
