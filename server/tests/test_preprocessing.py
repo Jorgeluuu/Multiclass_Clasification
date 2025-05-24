@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+
 import pandas as pd
 import pytest
 from server.models.preprocessing import PreprocessingPipeline
@@ -45,7 +49,7 @@ def test_preprocessing_pipeline_transform():
     # 4. Transformar los datos
     result = pipeline.transform(df)
 
-    # 5. Verificar que el resultado tiene las columnas esperadas y en el orden correcto
+    # 5. Verificar que el resultado tiene las columnas esperadas
     assert list(result.columns) == features
 
     # 6. Verificar que los valores numéricos se han mapeado correctamente
