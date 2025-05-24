@@ -12,22 +12,86 @@ Utiliza técnicas avanzadas de aprendizaje automático, específicamente XGBoost
 ## 🏗️ Estructura del Proyecto
 
 ```
-├── client/                  # Frontend de la aplicación
-│   ├── src/                 # Código fuente React
-│   └── public/              # Archivos estáticos
-├── data/                    # Conjuntos de datos
-│   ├── raw/                 # Datos sin procesar
-│   └── processed/           # Datos procesados
-├── server/                  # Backend de la aplicación
-│   ├── models/              # Modelos ML y preprocesamiento
-│   ├── database/            # Configuración de base de datos
-│   └── src/                 # Lógica del servidor
-├── model_training/          # Notebooks de entrenamiento
-│   ├── random_forest.ipynb
-│   └── xgboost.ipynb
-└── notebooks/              # Notebooks de análisis
-    ├── EDA.ipynb           # Análisis exploratorio de datos
-    └── data_cleaning.ipynb # Limpieza y preprocesamiento de datos
+Multiclass_Clasification/
+│
+├── 📁 data/                                    # Datos del proyecto
+│   ├── raw/
+│   │   └── raw_data.csv                        # Datos originales sin procesar
+│   └── processed/
+│       └── dataset_procesado.csv               # Datos limpios y transformados para ML
+│
+├── 📁 notebooks/                               # Análisis exploratorio y experimentación
+│   ├── EDA.ipynb                              # Análisis Exploratorio de Datos completo
+│   └── data_cleaning.ipynb                    # Limpieza y preprocesamiento de datos
+│
+├── 📁 model_training/                          # Entrenamiento de modelos ML
+│   ├── xgboost.ipynb                          # Entrenamiento del modelo XGBoost
+│   └── random_forest.ipynb                    # Entrenamiento del modelo Random Forest
+│
+├── 📁 models/                                  # Modelos entrenados y artefactos
+│   ├── xgboost.ipynb                          # Notebook de entrenamiento XGBoost
+│   └── trained/
+│       ├── xgboost_multiclass_model.pkl       # Modelo XGBoost serializado
+│       └── ...                                # Otros modelos entrenados
+│
+├── 📁 server/                                  # Backend de la aplicación (Python/FastAPI)
+│   ├── __init__.py                            # Hace que server sea un paquete Python
+│   ├── main.py                                # Punto de entrada del servidor FastAPI
+│   ├── __pycache__/                           # Archivos compilados de Python
+│   │
+│   ├── 📁 models/                             # Lógica de Machine Learning
+│   │   ├── preprocessing.py                   # Pipeline de preprocesamiento de datos
+│   │   ├── predictor.py                       # Función principal de predicción
+│   │   └── schemas.py                         # Esquemas de validación con Pydantic
+│   │
+│   ├── 📁 database/                           # Gestión de base de datos
+│   │   ├── migrations.py                      # Sistema de migración y creación de tablas
+│   │   └── supabase_client.py                 # Cliente para conectar con Supabase
+│   │
+│   ├── 📁 artifacts/                          # Modelos y pipelines serializados
+│   │   ├── xgboost_multiclass_pipeline.pkl    # Pipeline de preprocesamiento serializado
+│   │   ├── xgboost_multiclass_model.pkl       # Modelo XGBoost para producción
+│   │   └── ...                                # Otros artefactos ML
+│   │
+│   └── 📁 tests/                              # Tests unitarios y de integración
+│       ├── test_preprocessing.py              # Tests del pipeline de preprocesamiento
+│       ├── test_predictor.py                  # Tests de la función de predicción
+│       └── test_migrations.py                 # Tests del sistema de migración
+│
+├── 📁 client/                                  # Frontend de la aplicación (React/Vite)
+│   ├── index.html                             # Archivo HTML principal
+│   ├── package.json                           # Dependencias y scripts de npm
+│   ├── eslint.config.js                       # Configuración del linter
+│   ├── postcss.config.js                      # Configuración de PostCSS
+│   ├── tailwind.config.js                     # Configuración de Tailwind CSS
+│   │
+│   └── 📁 src/                                # Código fuente del frontend
+│       ├── main.jsx                           # Punto de entrada de la aplicación React
+│       ├── App.jsx                            # Componente principal de la aplicación
+│       │
+│       ├── 📁 components/                     # Componentes reutilizables de React
+│       │   ├── Button.jsx                     # Componente de botón personalizado
+│       │   ├── Navbar.jsx                     # Barra de navegación superior
+│       │   ├── Footer.jsx                     # Pie de página
+│       │   ├── StudentPredictionForm.jsx      # Formulario principal de predicción
+│       │   └── PredictionList.jsx             # Lista/tabla de predicciones históricas
+│       │
+│       ├── 📁 pages/                          # Páginas principales de la aplicación
+│       │   ├── Prediction.jsx                 # Página de nueva predicción
+│       │   └── Monitoring.jsx                 # Página de seguimiento y historial
+│       │
+│       ├── 📁 services/                       # Servicios para comunicación con API
+│       │   └── studentService.js              # Servicio para llamadas al backend
+│       │
+│       └── 📁 assets/                         # Recursos estáticos
+│           └── images/                        # Imágenes de la aplicación
+│               ├── madrid-logo.png            # Logo 
+│               ├── student-monitoring.jpg     # Imagen para página de seguimiento
+│               └── students-prediction.jpg    # Imagen para página de predicción
+│
+├── requirements.txt                            # Dependencias de Python del backend
+├── README.md                                  # Documentación del proyecto
+└── .gitignore                                 # Archivos a ignorar por Git
 ```
 
 ## 🛠️ Tecnologías Utilizadas
@@ -69,9 +133,15 @@ source venv/bin/activate  # Linux/Mac
 source env/Scripts/activate #Windows-Bash
 ```
 
-Instalar dependencias desde requirements.txt:
+3. Instalar dependencias desde requirements.txt:
 ```bash
 pip install -r requirements.txt
+```
+
+4. Levantar el backend
+(raiz del proyecto): 
+```bash
+uvicorn server.main:app --reload
 ```
 
 ### Preparación de Datos
@@ -98,6 +168,7 @@ cd client
 2. Instalar dependencias:
 ```bash
 npm install
+npm run dev
 ```
 
 ## 🎯 Características Principales
