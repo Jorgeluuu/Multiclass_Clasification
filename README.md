@@ -35,71 +35,81 @@ Utiliza técnicas avanzadas de aprendizaje automático, específicamente XGBoost
 ```
 Multiclass_Clasification/
 │
-├── 📁 client/                                  # Frontend de la aplicación (React/Vite)
-│   ├── index.html                             # Archivo HTML principal
-│   ├── package.json                           # Dependencias y scripts de npm
-│   ├── eslint.config.js                       # Configuración del linter
-│   ├── postcss.config.js                      # Configuración de PostCSS
-│   ├── tailwind.config.js                     # Configuración de Tailwind CSS
+├── 📱 client/                              # Frontend React + Tailwind
+│   ├── public/
+│   ├── src/
+│   │   ├── components/                     # Componentes React reutilizables
+│   │   │   ├── Button.jsx                  # Botón personalizado con estilos
+│   │   │   ├── Navbar.jsx                  # Navegación principal
+│   │   │   ├── Footer.jsx                  # Pie de página
+│   │   │   ├── StudentPredictionForm.jsx   # Formulario de predicción
+│   │   │   └── PredictionList.jsx          # Lista de predicciones históricas
+│   │   │
+│   │   ├── pages/                          # Páginas principales
+│   │   │   ├── Prediction.jsx              # Página de nueva predicción
+│   │   │   └── Monitoring.jsx              # Dashboard de seguimiento
+│   │   │
+│   │   ├── services/                       # Comunicación con API
+│   │   │   └── studentService.js           # Servicio HTTP para backend
+│   │   │
+│   │   ├── routes/                         # Configuración de rutas
+│   │   │   └── Routes.jsx                  # React Router setup
+│   │   │
+│   │   ├── layout/                         # Layout general
+│   │   │   └── layout.jsx                  # Estructura común (navbar+footer)
+│   │   │
+│   │   └── assets/                         # Recursos estáticos
+│   │       └── images/                     # Imágenes del proyecto
 │   │
-│   └── 📁 src/                                # Código fuente del frontend
-│       ├── main.jsx                           # Punto de entrada de la aplicación React
-│       ├── App.jsx                            # Componente principal de la aplicación
-│       │
-│       ├── 📁 components/                     # Componentes reutilizables de React
-│       │   ├── Button.jsx                     # Componente de botón personalizado
-│       │   ├── Navbar.jsx                     # Barra de navegación superior
-│       │   ├── Footer.jsx                     # Pie de página
-│       │   ├── StudentPredictionForm.jsx      # Formulario principal de predicción
-│       │   └── PredictionList.jsx             # Lista/tabla de predicciones históricas
-│       │
-│       ├── 📁 pages/                          # Páginas principales de la aplicación
-│       │   ├── Prediction.jsx                 # Página de nueva predicción
-│       │   └── Monitoring.jsx                 # Página de seguimiento y historial
-│       │
-│       ├── 📁 services/                       # Servicios para comunicación con API
-│       │   └── studentService.js              # Servicio para llamadas al backend
-│       │
-│       └── 📁 assets/                         # Recursos estáticos
-│           └── images/                        # Imágenes de la aplicación
-│               ├── madrid-logo.png            # Logo 
-│               ├── student-monitoring.jpg     # Imagen para página de seguimiento
-│               └── students-prediction.jpg    # Imagen para página de predicción
+│   ├── package.json                        # Dependencias React
+│   ├── tailwind.config.js                  # Configuración Tailwind CSS
+│   └── vite.config.js                      # Configuración Vite
 │
-├── 📁 data/                                    # Datos del proyecto
+├── 🐍 server/                              # Backend Python + FastAPI
+│   ├── database/                           # Gestión de base de datos
+│   │   ├── supabase_client.py              # Cliente Supabase
+│   │   └── migrations.py                   # Sistema de migración de BD
+│   │
+│   ├── models/                             # Machine Learning & Datos
+│   │   ├── model_trainer.py                # Entrenamiento XGBoost
+│   │   ├── predictor.py                    # Lógica de predicción ML
+│   │   ├── preprocessing.py                # Pipeline de preprocesamiento
+│   │   ├── schemas.py                      # Validación Pydantic
+│   │   └── checking_data.ipynb             # Análisis exploratorio
+│   │
+│   ├── tests/                              # Tests unitarios
+│   │   ├── test_predictor.py               # Tests del modelo ML
+│   │   ├── test_preprocessing.py           # Tests del pipeline
+│   │   └── test_migrations.py              # Tests de BD
+│   │
+│   ├── artifacts/                          # Modelos entrenados (generados)
+│   │   ├── xgboost_multiclass_model.pkl    # Modelo XGBoost serializado
+│   │   └── xgboost_multiclass_pipeline.pkl # Pipeline preprocesamiento
+│   │
+│   └── main.py                             # API FastAPI principal
+│
+├── 📊 data/                                # Datasets
 │   ├── raw/
-│   │   └── raw_data.csv                        # Datos originales sin procesar
+│   │   └── raw_data.csv                    # Datos originales
 │   └── processed/
-│       └── dataset_procesado.csv               # Datos limpios y transformados para ML
+│       └── dataset_procesado.csv           # Datos limpios para ML
 │
-├── 📁 server/                                  # Backend de la aplicación (Python/FastAPI)
-│   ├── __init__.py                            # Hace que server sea un paquete Python
-│   ├── main.py                                # Punto de entrada del servidor FastAPI
-│   │
-│   ├── 📁 artifacts/                          # Modelos y pipelines serializados
-│   │   ├── xgboost_multiclass_pipeline.pkl    # Pipeline de preprocesamiento serializado
-│   │   └── xgboost_multiclass_model.pkl       # Modelo XGBoost para producción
-│   │
-│   ├── 📁 database/                           # Gestión de base de datos
-│   │   ├── migrations.py                      # Sistema de migración y creación de tablas
-│   │   └── supabase_client.py                 # Cliente para conectar con Supabase
-│   │
-│   ├── 📁 models/                             # Lógica de Machine Learning
-│   │   ├── preprocessing.py                   # Pipeline de preprocesamiento de datos
-│   │   ├── predictor.py                       # Función principal de predicción
-│   │   ├── schemas.py                         # Esquemas de validación con Pydantic
-│   │   └── model_trainer.py                   # Script para entrenar el modelo
-│   │
-│   └── 📁 tests/                              # Tests unitarios y de integración
-│       ├── test_migrations.py                 # Tests del sistema de migración
-│       ├── test_predictor.py                  # Tests de la función de predicción
-│       └── test_preprocessing.py              # Tests del pipeline de preprocesamiento
+├── 🐳 Docker & Deploy/                     # Configuración deployment
+│   ├── Dockerfile.backend                  # Contenedor Python/FastAPI
+│   ├── Dockerfile.frontend                 # Contenedor React/Nginx
+│   ├── docker-compose.yml                 # Orquestación completa
+│   ├── nginx.conf                          # Configuración Nginx
+│   ├── render-backend.yaml                # Deploy backend Render
+│   └── render-frontend.yaml               # Deploy frontend Render
 │
-├── init_database.py                           # Script de inicialización de la base de datos
-├── .env_example                               # Ejemplo de variables de entorno
-├── .gitignore                                 # Archivos a ignorar por Git
-├── README.md                                  # Documentación del proyecto
-└── requirements.txt                           # Dependencias de Python del backend
+├── 🔧 Configuración/
+│   ├── requirements.txt                    # Dependencias Python
+│   ├── pyproject.toml                      # Configuración proyecto Python
+│   ├── .env_example                        # Variables de entorno ejemplo
+│   ├── .gitignore                          # Archivos ignorados Git
+│   └── init_database.py                    # Script inicialización BD
+│
+└── 📖 README.md                            # Documentación principal
 ```
 
 ## 🛠️ Tecnologías Utilizadas
