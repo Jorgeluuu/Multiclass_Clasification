@@ -9,6 +9,18 @@
   <em>Interfaz Desktop y Móvil - Diseño completamente responsivo</em>
 </div>
 
+## 📝 Nota Académica
+
+> **Proyecto Educativo - Bootcamp de Inteligencia Artificial Factoría F5**
+> 
+> Este es un proyecto académico con fines educativos únicamente. El diseño está inspirado en los portales de la Comunidad de Madrid pero no está afiliado ni representa a ninguna institución oficial.
+
+## 🌐 Demo en Vivo
+
+🚀 **Aplicación desplegada**: [https://student-predictor-oelj.onrender.com/](https://student-predictor-oelj.onrender.com/)
+
+*Nota: El despliegue en Render puede tardar unos segundos en cargar debido al plan gratuito.*
+
 ## 📚 Descripción del Proyecto
 
 Este proyecto implementa un sistema de clasificación multiclase para predecir el éxito académico de estudiantes universitarios. El sistema puede clasificar a los estudiantes en tres categorías:
