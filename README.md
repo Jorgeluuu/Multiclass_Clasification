@@ -161,7 +161,7 @@ mkdir -p data/raw data/processed
 ```
 
 #### 3.2. Descargar y colocar el dataset
-- Descargar el dataset de [Predict students' dropout and academic success](https://archive.ics.uci.edu/dataset/468/online+shoppers+purchasing+intention+dataset)
+- Descargar el dataset de [Predict students' dropout and academic success](https://www.kaggle.com/datasets/thedevastator/higher-education-predictors-of-student-retention)
 - Colocar el archivo como `data/raw/raw_data.csv`
 
 #### 3.3. Entrenar el modelo ML
