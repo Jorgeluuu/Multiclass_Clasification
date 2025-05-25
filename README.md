@@ -1,5 +1,14 @@
 # Sistema de Clasificación Multiclase para Predicción de Éxito Académico
 
+## 📱 Capturas de Pantalla
+
+<div align="center">
+  <img src="https://github.com/Jorgeluuu/Multiclass_Clasification/blob/feature/frontend/client/src/assets/images/Macbook-Pro-16-2110x1286.png" alt="Vista Desktop" width="450" style="margin-right: 20px;"/>
+  <img src="https://github.com/Jorgeluuu/Multiclass_Clasification/blob/feature/frontend/client/src/assets/images/iPhone-14-Pro-Max-473x968.png" alt="Vista Móvil" width="135"/>
+  <br/>
+  <em>Interfaz Desktop y Móvil - Diseño completamente responsivo</em>
+</div>
+
 ## 📚 Descripción del Proyecto
 
 Este proyecto implementa un sistema de clasificación multiclase para predecir el éxito académico de estudiantes universitarios. El sistema puede clasificar a los estudiantes en tres categorías:
@@ -51,29 +60,13 @@ Multiclass_Clasification/
 │   └── processed/
 │       └── dataset_procesado.csv               # Datos limpios y transformados para ML
 │
-├── 📁 models/                                  # Modelos entrenados y artefactos
-│   ├── xgboost.ipynb                          # Notebook de entrenamiento XGBoost
-│   └── trained/
-│       ├── xgboost_multiclass_model.pkl       # Modelo XGBoost serializado
-│       └── ...                                # Otros modelos entrenados
-│
-├── 📁 model_training/                          # Entrenamiento de modelos ML
-│   ├── xgboost.ipynb                          # Entrenamiento del modelo XGBoost
-│   └── random_forest.ipynb                    # Entrenamiento del modelo Random Forest
-│
-├── 📁 notebooks/                               # Análisis exploratorio y experimentación
-│   ├── EDA.ipynb                              # Análisis Exploratorio de Datos completo
-│   └── data_cleaning.ipynb                    # Limpieza y preprocesamiento de datos
-│
 ├── 📁 server/                                  # Backend de la aplicación (Python/FastAPI)
 │   ├── __init__.py                            # Hace que server sea un paquete Python
 │   ├── main.py                                # Punto de entrada del servidor FastAPI
-│   ├── __pycache__/                           # Archivos compilados de Python
 │   │
 │   ├── 📁 artifacts/                          # Modelos y pipelines serializados
 │   │   ├── xgboost_multiclass_pipeline.pkl    # Pipeline de preprocesamiento serializado
-│   │   ├── xgboost_multiclass_model.pkl       # Modelo XGBoost para producción
-│   │   └── ...                                # Otros artefactos ML
+│   │   └── xgboost_multiclass_model.pkl       # Modelo XGBoost para producción
 │   │
 │   ├── 📁 database/                           # Gestión de base de datos
 │   │   ├── migrations.py                      # Sistema de migración y creación de tablas
@@ -82,13 +75,16 @@ Multiclass_Clasification/
 │   ├── 📁 models/                             # Lógica de Machine Learning
 │   │   ├── preprocessing.py                   # Pipeline de preprocesamiento de datos
 │   │   ├── predictor.py                       # Función principal de predicción
-│   │   └── schemas.py                         # Esquemas de validación con Pydantic
+│   │   ├── schemas.py                         # Esquemas de validación con Pydantic
+│   │   └── model_trainer.py                   # Script para entrenar el modelo
 │   │
 │   └── 📁 tests/                              # Tests unitarios y de integración
 │       ├── test_migrations.py                 # Tests del sistema de migración
 │       ├── test_predictor.py                  # Tests de la función de predicción
 │       └── test_preprocessing.py              # Tests del pipeline de preprocesamiento
 │
+├── init_database.py                           # Script de inicialización de la base de datos
+├── .env_example                               # Ejemplo de variables de entorno
 ├── .gitignore                                 # Archivos a ignorar por Git
 ├── README.md                                  # Documentación del proyecto
 └── requirements.txt                           # Dependencias de Python del backend
@@ -101,14 +97,12 @@ Multiclass_Clasification/
 - XGBoost
 - Scikit-learn
 - FastAPI
+- Supabase
 
 ### Frontend
 - React
 - Tailwind CSS
 - Vite
-
-### Base de Datos
-- Supabase
 
 ## 📋 Requisitos Previos
 
@@ -117,59 +111,95 @@ Multiclass_Clasification/
 - Git
 
 ## 🚀 Instalación y Configuración
-### Backend
 
-1. Clonar el repositorio:
+### 1. Clonar el repositorio
 ```bash
 git clone [URL del repositorio]
 cd Multiclass_Clasification
 ```
 
-2. Crear y activar entorno virtual:
+### 2. Configuración del Backend
+
+#### 2.1. Crear y activar entorno virtual
 ```bash
 python -m venv venv
-.\venv\Scripts\activate  # Windows
-source venv/bin/activate  # Linux/Mac
-source env/Scripts/activate #Windows-Bash
+# Windows
+.\venv\Scripts\activate
+# Linux/Mac
+source venv/bin/activate
 ```
 
-3. Instalar dependencias desde requirements.txt:
+#### 2.2. Instalar dependencias
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Levantar el backend
-(raiz del proyecto): 
+#### 2.3. Configurar variables de entorno
 ```bash
-uvicorn server.main:app --reload
+# Copiar el archivo de ejemplo
+cp .env_example .env
+# Editar .env con tus credenciales de Supabase
 ```
 
-### Preparación de Datos
+### 3. Preparación de Datos y Modelo
 
-1. Crear las carpetas necesarias para los datos:
+#### 3.1. Crear estructura de carpetas
 ```bash
 mkdir -p data/raw data/processed
 ```
 
-2. Colocar el archivo CSV con los datos del estudiante en la carpeta correspondiente:
-- Datos sin procesar: `data/raw/student_data.csv`
-   Debes descargar el dataset de [Predict students' dropout and academic success](https://archive.ics.uci.edu/dataset/468/online+shoppers+purchasing+intention+dataset) y colocarlo en la carpeta `data/raw/`.
+#### 3.2. Descargar y colocar el dataset
+- Descargar el dataset de [Predict students' dropout and academic success](https://archive.ics.uci.edu/dataset/468/online+shoppers+purchasing+intention+dataset)
+- Colocar el archivo como `data/raw/raw_data.csv`
 
-- Datos procesados: `data/processed/processed_data.csv`
-   Estos se crearan automaticamente
+#### 3.3. Entrenar el modelo ML
+```bash
+python server/models/model_trainer.py
+```
 
-### Frontend
+#### 3.4. Inicializar la base de datos
+```bash
+python init_database.py
+```
 
-1. Navegar al directorio del cliente:
+### 4. Levantar el Backend
+```bash
+uvicorn server.main:app --reload
+```
+
+### 5. Configuración del Frontend
+
+#### 5.1. Instalar dependencias
 ```bash
 cd client
+npm install
 ```
 
-2. Instalar dependencias:
+#### 5.2. Ejecutar en modo desarrollo
 ```bash
-npm install
 npm run dev
 ```
+
+## 🐳 Ejecución con Docker (Opcional)
+
+Si prefieres usar Docker:
+
+```bash
+# Configurar variables de entorno
+cp .env_example .env
+
+# Ejecutar con Docker Compose
+docker-compose up --build
+```
+
+## 🔍 Verificación del Sistema
+
+Una vez completada la instalación:
+
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:8000
+- **Estado del modelo**: http://localhost:8000/model/status  
+- **Ver estudiantes**: http://localhost:8000/students
 
 ## 🎯 Características Principales
 
