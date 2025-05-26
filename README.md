@@ -202,6 +202,11 @@ npm install
 npm run dev
 ```
 
+### Ejecutar Tests 
+ ```bash
+   pytest server/tests
+   ```
+
 ## 🐳 Ejecución con Docker (Opcional)
 
 Si prefieres usar Docker:
